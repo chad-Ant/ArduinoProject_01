@@ -2,25 +2,20 @@
 #include <Arduino.h>
 #include <Servo.h>
 
-Servo servo_XAxis;
-Servo servo_YAxis;
+//Servo servo_XAxis;
+//Servo servo_YAxis;
 
-void beginServo(){
-    servo_XAxis.attach(SERVO_XAXIS_PIN);
-    servo_YAxis.attach(SERVO_YAXIS_PIN);
+bool initializeServo(Servo &servo_XAxis,Servo &servo_YAxis){
+    servo_XAxis.attach(SERVO_XAXIS_PIN,SERVO_XAXIS_PWMIN,SERVO_XAXIS_PWMAX);
+    servo_YAxis.attach(SERVO_YAXIS_PIN,SERVO_YAXIS_PWMIN,SERVO_YAXIS_PWMAX);
+    return (servo_XAxis.attached() && servo_YAxis.attached());
 }
 
-int readPosition(ServoAxis axis){
-   if (axis == X_AXIS){
-    return servo_XAxis.read();
-   }
-   if (axis == Y_AXIS){
-    return servo_XAxis.read();
-   }
-   return 0xFFFFFFFF;
+int readPosition(Servo &servo_XYAxis){
+    return servo_XYAxis.read();
 }
 
-void writePosition(byte x, byte y){
+void writePosition(Servo &servo_XAxis,byte x,Servo &servo_YAxis,byte y){
     if (x < 0){
         x = 0;
     }
@@ -39,6 +34,7 @@ void writePosition(byte x, byte y){
     servo_YAxis.write(y);
 }
 
-void endServo(){
-    
+void closeServo(Servo &servo_XAxis,Servo &servo_YAxis){
+    servo_XAxis.detach();
+    servo_YAxis.detach();
 }
