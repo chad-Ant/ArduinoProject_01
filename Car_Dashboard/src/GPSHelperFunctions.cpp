@@ -1,7 +1,36 @@
 #include "..\include\HelperFunctions.h"
+#include <SparkFun_u-blox_GNSS_Arduino_Library.h>
 #include <Arduino.h>
 
+bool initializeGPS(SFE_UBLOX_GNSS &myGNSS){
+    bool initializationSuccess = false;
+    pinMode(GPS_PIN, OUTPUT);
+    digitalWrite(GPS_PIN, HIGH);
 
+    for (int i = 0; i < GPS_INIT_MAX_RETRY; i++){
+        Serial1.begin(CUSTOM_GPS_BAUDRATE);
+        if (myGNSS.begin(Serial1)){
+            myGNSS.setUART1Output(COM_TYPE_UBX);
+            initializationSuccess = true;
+            break;
+        }
+        delay(1000);
+
+        Serial1.begin(DEFAULT_GPS_BAUDRATE);
+        if (myGNSS.begin(Serial1)) {
+            myGNSS.setSerialRate(CUSTOM_GPS_BAUDRATE);
+            delay(1000);
+        } else {
+        //myGNSS.factoryReset();
+        delay(1000);
+        }
+    }
+
+    return initializationSuccess;
+}
+
+
+/*
 void sendData(int latitude,int longitude,int altitude,int speed, int heading){
 }
 
@@ -40,3 +69,4 @@ void int32ToChar16String(uint32_t number,char16_t *output,size_t outputSize){
 
     output[index] = u'\0'; // Null-terminate the string
 }
+*/
