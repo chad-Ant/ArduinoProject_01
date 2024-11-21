@@ -2,14 +2,17 @@
 #include <SparkFun_u-blox_GNSS_Arduino_Library.h>
 #include <Arduino.h>
 
-bool initializeGPS(SFE_UBLOX_GNSS &myGNSS){
+bool initializeGPS(SFE_UBLOX_GNSS &myGNSS)
+{
     bool initializationSuccess = false;
     pinMode(GPS_PIN, OUTPUT);
     digitalWrite(GPS_PIN, HIGH);
 
-    for (int i = 0; i < GPS_INIT_MAX_RETRY; i++){
+    for (int i = 0; i < GPS_INIT_MAX_RETRY; i++)
+    {
         Serial1.begin(CUSTOM_GPS_BAUDRATE);
-        if (myGNSS.begin(Serial1)){
+        if (myGNSS.begin(Serial1))
+        {
             myGNSS.setUART1Output(COM_TYPE_UBX);
             initializationSuccess = true;
             break;
@@ -17,19 +20,30 @@ bool initializeGPS(SFE_UBLOX_GNSS &myGNSS){
         delay(1000);
 
         Serial1.begin(DEFAULT_GPS_BAUDRATE);
-        if (myGNSS.begin(Serial1)) {
+        if (myGNSS.begin(Serial1))
+        {
             myGNSS.setSerialRate(CUSTOM_GPS_BAUDRATE);
             delay(1000);
-        } else {
-        //myGNSS.factoryReset();
-        delay(1000);
+        }
+        else
+        {
+            // myGNSS.factoryReset();
+            delay(1000);
         }
     }
 
     return initializationSuccess;
 }
 
+void getLatLongAlt(SFE_UBLOX_GNSS &myGNSS,float &latitude,float &longitude,float &alt){
+    latitude = (float)(myGNSS.getLatitude()) * 0.0000001;
+    longitude = (float)(myGNSS.getLongitude()) * 0.0000001;
+}
 
+void getSpeedHeading(SFE_UBLOX_GNSS &myGNSS,float &speed,float &heading){
+    speed = (float)(myGNSS.getGroundSpeed()) * 0.0036;  //km/h
+    heading = (float)(myGNSS.getHeading()) * 0.00001;   //deg
+}
 /*
 void sendData(int latitude,int longitude,int altitude,int speed, int heading){
 }
