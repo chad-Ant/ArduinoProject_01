@@ -1,9 +1,10 @@
 #ifndef HELPER_FUNCTIONS_H
 #define HELPER_FUNCTIONS_H 1
 
-#include <SparkFun_u-blox_GNSS_Arduino_Library.h>
 //#include <Adafruit_SSD1306.h>
 #include <Servo.h>
+#include "Adafruit_LEDBackpack.h"
+#include <SparkFun_u-blox_GNSS_Arduino_Library.h>
 
 #define STATUS_INDICATOR        LED_BUILTIN
 #define OLED_SCREEN_HEIGT       32U
@@ -27,10 +28,10 @@
 #define MAX_XAXIS_ANGLE         180U
 #define MAX_YAXIS_ANGLE         180U
 
-typedef enum ServoAxis{
+enum ServoAxis{
     X_AXIS = 0,
     Y_AXIS = 1
-}ServoAxis;
+};
 
 #define PACKET_BYTE_LENGTH      20U
 #define SERIAL_BAUDRATE         115200U
@@ -45,6 +46,11 @@ bool initializeServo(Servo &servo_XAxis,Servo &servo_YAxis);
 int readPosition(Servo &servo_XYAxis);
 void writePosition(Servo &servo_XAxis,byte x,Servo &servo_YAxis,byte y);
 void closeServo(Servo &servo_XAxis,Servo &servo_YAxis);
+
+bool initializeSegmentLED(Adafruit_AlphaNum4 &alpha4);
+void adjustLEDBrightness(Adafruit_AlphaNum4 &alpha4, uint8_t ambientLuminosity);
+void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number);
+void writeStringLED_Mirror(Adafruit_AlphaNum4 &alpha4,const char *stringInput);
 
 bool initializeGPS(SFE_UBLOX_GNSS &myGNSS);
 
