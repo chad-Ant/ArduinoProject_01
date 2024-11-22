@@ -28,11 +28,6 @@
 #define MAX_XAXIS_ANGLE         180U
 #define MAX_YAXIS_ANGLE         180U
 
-enum ServoAxis{
-    X_AXIS = 0,
-    Y_AXIS = 1
-};
-
 #define PACKET_BYTE_LENGTH      20U
 #define SERIAL_BAUDRATE         115200U
 const char16_t PACKET_START_MARKER = 0x6752;
@@ -52,7 +47,7 @@ inline int32_t div100Approx(int32_t number){
     return (10486 * number) >> 20;
 }
 
-inline int32_t div1000Approx(int32_t number){
+inline int64_t div1000Approx(int64_t number){
     /*!Will not check for overflow
     not accurate for large number
     */

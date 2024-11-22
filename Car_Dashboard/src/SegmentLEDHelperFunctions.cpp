@@ -18,14 +18,14 @@ enum DigitMapping
     NUM_4_DP_MIRROR = 0x40F2,
     NUM_5_MIRROR = 0x88B,
     NUM_5_DP_MIRROR = 0x488B,
-    NUM_6_MIRROR = 0x88F,
-    NUM_6_DP_MIRROR = 0x488F,
-    NUM_7_MIRROR = 0x2101,
-    NUM_7_DP_MIRROR = 0x6101,
+    NUM_6_MIRROR = 0xDF,
+    NUM_6_DP_MIRROR = 0x40DF,
+    NUM_7_MIRROR = 0x31,
+    NUM_7_DP_MIRROR = 0x4031,
     NUM_8_MIRROR = 0xFF,
     NUM_8_DP_MIRROR = 0x40FF,
-    NUM_9_MIRROR = 0x479,
-    NUM_9_DP_MIRROR = 0x4479,
+    NUM_9_MIRROR = 0xFB,
+    NUM_9_DP_MIRROR = 0x40FB,
     CHAR_A_MIRROR = 0xF7,
     CHAR_B_MIRROR = 0x1DF,
     CHAR_C_MIRROR = 0xF,
@@ -59,7 +59,7 @@ enum DigitMapping
     STAR_5 = 0x2AC0,
     STAR_8 = 0x3FC0,
     EXPONENT_E_MIRROR = 0x208C,
-    MINUS_SIGN = 0x80,
+    MINUS_SIGN = 0x40,
     EQUAL_SIGN = 0xC8,
     GREATER_SIGN_MIRROR = 0x2400,
     GEQ_SIGN_MIRROR = 0x2408,
@@ -76,6 +76,8 @@ enum DigitMapping
     DASH = 0xC0,
     UNDERSCORE = 0x8,
     COMMA_MIRROR = 0x2000,
+    FSLASH_MIRROR = 0x2040,
+    BSLASH_MIRROR = 0xC00,
     NONE_TO_DISPLAY = 0x0
 };
 
@@ -245,7 +247,9 @@ DigitMapping mapString(char c)
     case '*':
         return STAR_5;
     case '/':
-        return X_CROSS;
+        return FSLASH_MIRROR;
+    case '\\':
+        return BSLASH_MIRROR;
     case ' ':
     default:
         return NONE_TO_DISPLAY;
@@ -289,11 +293,10 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4,float number)
     int units = 0;
     int tens = 0;
     int hundreds = 0;
-    int thousands = 0;
+    int64_t thousands = 0;
 
     if (isinf(number))
     {
-        Serial.println("isinf(number)");
         LEDBuffer[0] = CHAR_F_MIRROR;
         LEDBuffer[1] = CHAR_N_MIRROR;
         LEDBuffer[2] = CHAR_I_MIRROR;
@@ -301,21 +304,18 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4,float number)
     }
     else if (isnan(number))
     {   
-        Serial.println("isnan(number)");
         LEDBuffer[0] = CHAR_N_MIRROR;
         LEDBuffer[1] = CHAR_A_MIRROR;
         LEDBuffer[2] = CHAR_N_MIRROR;
     }
     else if (isinf(-number))
     {
-        Serial.println("isinf(-number)");
         LEDBuffer[0] = CHAR_F_MIRROR;
         LEDBuffer[1] = CHAR_N_MIRROR;
         LEDBuffer[2] = CHAR_I_MIRROR;
         LEDBuffer[3] = MINUS_SIGN;
     }
     else if (number == 0){
-        Serial.println("number == 0");
         LEDBuffer[3] = NUM_0_DP_MIRROR;
         LEDBuffer[2] = NUM_0_MIRROR;
     }
@@ -325,7 +325,6 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4,float number)
 
         if (number > 0 && number < 1000)
         {
-            Serial.println("number > 0 && number < 1000");
             integerPart = (int32_t)(floorf(number));
             decimalPart = (int32_t)((number - integerPart) * 10);
             hundreds = div100Approx(integerPart);
@@ -334,13 +333,12 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4,float number)
 
             LEDBuffer[3] = hundreds == 0 ? NONE_TO_DISPLAY : mapDigit(hundreds, false);
             LEDBuffer[2] = tens == 0 && hundreds == 0 ? NONE_TO_DISPLAY : mapDigit(tens, false);
-            LEDBuffer[1] = mapDigit(tens, false);
+            LEDBuffer[1] = mapDigit(units, false);
             LEDBuffer[0] = mapDigit(decimalPart, true);
         }
 
         else if (number > -100 && number < 0)
         {
-            Serial.println("number > -100 && number < 0");
             integerPart = (int32_t)(floorf(-number));
             decimalPart = abs((int)((number + integerPart) * 10));
             tens = div10Approx(integerPart);
@@ -354,7 +352,6 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4,float number)
 
         else if (number <= -100)
         {
-            Serial.println("number <= -100");
             integerPart = abs((int32_t)number);
             hundreds = div100Approx(integerPart);
             tens = div10Approx(integerPart - hundreds * 100);
@@ -368,7 +365,6 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4,float number)
 
         else if (number >= 1000)
         {
-            Serial.println("number >= 1000");
             integerPart = (int32_t)number;
             thousands = div1000Approx(integerPart);
             hundreds = div100Approx(integerPart - thousands * 1000);
@@ -382,13 +378,8 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4,float number)
         }
 
         else
-            Serial.println("n//a");
             ;
     }
-    
-    Serial.println(integerPart);
-    Serial.println(decimalPart);
-    Serial.println("-------------------");
 
     alpha4.clear();
     alpha4.writeDigitRaw(0, LEDBuffer[0]);
@@ -427,9 +418,9 @@ void writeStringLED_Mirror(Adafruit_AlphaNum4 &alpha4, const char *stringInput)
     }
 
     alpha4.clear();
-    alpha4.writeDigitRaw(0, LEDBuffer[3]);
-    alpha4.writeDigitRaw(1, LEDBuffer[2]);
-    alpha4.writeDigitRaw(2, LEDBuffer[1]);
-    alpha4.writeDigitRaw(3, LEDBuffer[0]);
+    alpha4.writeDigitRaw(0, LEDBuffer[0]);
+    alpha4.writeDigitRaw(1, LEDBuffer[1]);
+    alpha4.writeDigitRaw(2, LEDBuffer[2]);
+    alpha4.writeDigitRaw(3, LEDBuffer[3]);
     alpha4.writeDisplay();
 }
