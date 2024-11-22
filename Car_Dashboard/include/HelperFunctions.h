@@ -33,6 +33,14 @@
 const char16_t PACKET_START_MARKER = 0x6752;
 const char PACKET_END_MARKER = 0xED;
 
+enum GPSSignalStrength{
+    EXCELLENT,
+    GOOD,
+    AVERAGE,
+    BAD,
+    NOSIGNAL
+};
+
 inline int32_t div10Approx(int32_t number){
     /*!Will not check for overflow
     not accurate for large number

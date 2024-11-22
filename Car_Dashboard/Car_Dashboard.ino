@@ -52,8 +52,8 @@ void setup()
 void loop()
 { 
   getLatLongAlt(myGNSS,lat,lon,alt);
-  //writeFloatLED_Mirror(alpha4,alt);
-  writeStringLED_Mirror(alpha4,"err9");
+  writeFloatLED_Mirror(alpha4,alt);
+  //writeStringLED_Mirror(alpha4,"err9");
   Serial.println(alt);
   Serial.println(myGNSS.getSIV());
   Serial.println("-------------");

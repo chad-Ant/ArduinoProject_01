@@ -46,6 +46,12 @@ void getSpeedHeading(SFE_UBLOX_GNSS &myGNSS,float &speed,float &heading){
     speed = (float)(myGNSS.getGroundSpeed()) * 0.0036;  //km/h
     heading = (float)(myGNSS.getHeading()) * 0.00001;   //deg
 }
+
+GPSSignalStrength evaluateSignal(SFE_UBLOX_GNSS &myGNSS){
+    static GPSSignalStrength signalStrength = NOSIGNAL;
+    signalStrength = myGNSS.getSIV() == 0 ? NOSIGNAL : AVERAGE;
+    return signalStrength;
+}
 /*
 void sendData(int latitude,int longitude,int altitude,int speed, int heading){
 }
