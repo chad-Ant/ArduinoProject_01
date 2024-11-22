@@ -3,7 +3,6 @@
 #include "Adafruit_LEDBackpack.h"
 #include <Arduino.h>
 #include <cmath>
-#include <cstring>
 
 enum DigitMapping
 {
@@ -278,9 +277,9 @@ void adjustLEDBrightness(Adafruit_AlphaNum4 &alpha4, uint8_t ambientLuminosity)
     alpha4.setBrightness(LUT_5_15[ambientLuminosity]);
 }
 
-void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number)
+void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4,float number)
 {
-    static DigitMapping LEDBuffer[4] = {
+    DigitMapping LEDBuffer[4] = {
         NONE_TO_DISPLAY,
         NONE_TO_DISPLAY,
         NONE_TO_DISPLAY,
@@ -294,32 +293,41 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number)
 
     if (isinf(number))
     {
+        Serial.println("isinf(number)");
         LEDBuffer[0] = CHAR_F_MIRROR;
         LEDBuffer[1] = CHAR_N_MIRROR;
         LEDBuffer[2] = CHAR_I_MIRROR;
         LEDBuffer[3] = PLUS_CROSS;
     }
     else if (isnan(number))
-    {
+    {   
+        Serial.println("isnan(number)");
         LEDBuffer[0] = CHAR_N_MIRROR;
         LEDBuffer[1] = CHAR_A_MIRROR;
         LEDBuffer[2] = CHAR_N_MIRROR;
     }
     else if (isinf(-number))
     {
+        Serial.println("isinf(-number)");
         LEDBuffer[0] = CHAR_F_MIRROR;
         LEDBuffer[1] = CHAR_N_MIRROR;
         LEDBuffer[2] = CHAR_I_MIRROR;
         LEDBuffer[3] = MINUS_SIGN;
     }
+    else if (number == 0){
+        Serial.println("number == 0");
+        LEDBuffer[3] = NUM_0_DP_MIRROR;
+        LEDBuffer[2] = NUM_0_MIRROR;
+    }
     else
     {
-        number >= -999 ? (number <= 9999 ? number : 9999) : -999;
+        number = number >= -999 ? (number <= 9999 ? number : 9999) : -999;
 
         if (number > 0 && number < 1000)
         {
-            integerPart = (int32_t)floorf(number);
-            decimalPart = (int)((number - integerPart) * 10);
+            Serial.println("number > 0 && number < 1000");
+            integerPart = (int32_t)(floorf(number));
+            decimalPart = (int32_t)((number - integerPart) * 10);
             hundreds = div100Approx(integerPart);
             tens = div10Approx(integerPart - hundreds * 100);
             units = integerPart - hundreds * 100 - tens * 10;
@@ -332,11 +340,12 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number)
 
         else if (number > -100 && number < 0)
         {
-            integerPart = (int32_t)floorf(-number);
+            Serial.println("number > -100 && number < 0");
+            integerPart = (int32_t)(floorf(-number));
             decimalPart = abs((int)((number + integerPart) * 10));
             tens = div10Approx(integerPart);
             units = integerPart - tens * 10;
-
+            
             LEDBuffer[3] = tens == 0 ? NONE_TO_DISPLAY : MINUS_SIGN;
             LEDBuffer[2] = tens == 0 ? MINUS_SIGN : mapDigit(tens, false);
             LEDBuffer[1] = mapDigit(units, false);
@@ -345,7 +354,8 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number)
 
         else if (number <= -100)
         {
-            integerPart = abs((int)number);
+            Serial.println("number <= -100");
+            integerPart = abs((int32_t)number);
             hundreds = div100Approx(integerPart);
             tens = div10Approx(integerPart - hundreds * 100);
             units = integerPart - hundreds * 100 - tens * 10;
@@ -358,7 +368,8 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number)
 
         else if (number >= 1000)
         {
-            integerPart = (int)number;
+            Serial.println("number >= 1000");
+            integerPart = (int32_t)number;
             thousands = div1000Approx(integerPart);
             hundreds = div100Approx(integerPart - thousands * 1000);
             tens = div10Approx(integerPart - thousands * 1000 - hundreds * 100);
@@ -371,14 +382,21 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number)
         }
 
         else
+            Serial.println("n//a");
             ;
     }
+    
+    Serial.println(integerPart);
+    Serial.println(decimalPart);
+    Serial.println("-------------------");
+
     alpha4.clear();
-    alpha4.writeDigitRaw(0, LEDBuffer[3]);
-    alpha4.writeDigitRaw(1, LEDBuffer[2]);
-    alpha4.writeDigitRaw(2, LEDBuffer[1]);
-    alpha4.writeDigitRaw(3, LEDBuffer[0]);
+    alpha4.writeDigitRaw(0, LEDBuffer[0]);
+    alpha4.writeDigitRaw(1, LEDBuffer[1]);
+    alpha4.writeDigitRaw(2, LEDBuffer[2]);
+    alpha4.writeDigitRaw(3, LEDBuffer[3]);
     alpha4.writeDisplay();
+    return;
 }
 
 void writeStringLED_Mirror(Adafruit_AlphaNum4 &alpha4, const char *stringInput)

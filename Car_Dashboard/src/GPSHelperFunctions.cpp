@@ -35,9 +35,11 @@ bool initializeGPS(SFE_UBLOX_GNSS &myGNSS)
     return initializationSuccess;
 }
 
-void getLatLongAlt(SFE_UBLOX_GNSS &myGNSS,float &latitude,float &longitude,float &alt){
+void getLatLongAlt(SFE_UBLOX_GNSS &myGNSS,float &latitude,float &longitude,float &altitude){
     latitude = (float)(myGNSS.getLatitude()) * 0.0000001;
     longitude = (float)(myGNSS.getLongitude()) * 0.0000001;
+    altitude = (float)(myGNSS.getAltitudeMSL()) * 0.001;
+
 }
 
 void getSpeedHeading(SFE_UBLOX_GNSS &myGNSS,float &speed,float &heading){

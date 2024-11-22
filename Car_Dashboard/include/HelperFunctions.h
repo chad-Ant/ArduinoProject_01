@@ -38,9 +38,26 @@ enum ServoAxis{
 const char16_t PACKET_START_MARKER = 0x6752;
 const char PACKET_END_MARKER = 0xED;
 
-inline int32_t div10Approx(int32_t number);
-inline int32_t div100Approx(int32_t number);
-inline int32_t div1000Approx(int32_t number);
+inline int32_t div10Approx(int32_t number){
+    /*!Will not check for overflow
+    not accurate for large number
+    */
+    return (6554 * number) >> 16;
+}
+
+inline int32_t div100Approx(int32_t number){
+    /*!Will not check for overflow
+    not accurate for large number
+    */
+    return (10486 * number) >> 20;
+}
+
+inline int32_t div1000Approx(int32_t number){
+    /*!Will not check for overflow
+    not accurate for large number
+    */
+   return (536871 * number) >> 29;
+}
 
 bool initializeServo(Servo &servo_XAxis,Servo &servo_YAxis);
 int readPosition(Servo &servo_XYAxis);
@@ -49,9 +66,11 @@ void closeServo(Servo &servo_XAxis,Servo &servo_YAxis);
 
 bool initializeSegmentLED(Adafruit_AlphaNum4 &alpha4);
 void adjustLEDBrightness(Adafruit_AlphaNum4 &alpha4, uint8_t ambientLuminosity);
-void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number);
+void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4,float number);
 void writeStringLED_Mirror(Adafruit_AlphaNum4 &alpha4,const char *stringInput);
 
 bool initializeGPS(SFE_UBLOX_GNSS &myGNSS);
+void getLatLongAlt(SFE_UBLOX_GNSS &myGNSS,float &latitude,float &longitude,float &altitude);
+void getSpeedHeading(SFE_UBLOX_GNSS &myGNSS,float &speed,float &heading);
 
 #endif
