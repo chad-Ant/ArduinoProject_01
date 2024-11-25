@@ -81,7 +81,7 @@ enum DigitMapping
     NONE_TO_DISPLAY = 0x0
 };
 
-const uint8_t LUT_5_15[256] = {
+constexpr uint8_t LUT_5_15[256] = {
     5, 6, 7, 7, 8, 8, 9, 9, 9, 9, 9, 9, 10, 10,
     10, 10, 10, 10, 10, 10, 10, 11, 11, 11,
     11, 11, 11, 11, 11, 11, 11, 11, 11, 11,
@@ -111,7 +111,7 @@ const uint8_t LUT_5_15[256] = {
 
 bool initializeSegmentLED(Adafruit_AlphaNum4 &alpha4);
 void adjustLEDBrightness(Adafruit_AlphaNum4 &alpha4, uint8_t ambientLuminosity);
-void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4,float number);
-void writeStringLED_Mirror(Adafruit_AlphaNum4 &alpha4,const char *stringInput);
+void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number);
+void writeStringLED_Mirror(Adafruit_AlphaNum4 &alpha4, const char *stringInput);
 
 #endif

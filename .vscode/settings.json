@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "mathhelperfunctions": "cpp",
+        "cstdlib": "cpp",
+        "xutility": "cpp",
+        "cstddef": "cpp"
+    }
+}

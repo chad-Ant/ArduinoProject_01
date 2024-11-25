@@ -17,6 +17,6 @@ void getLatLongAlt(SFE_UBLOX_GNSS &myGNSS,float &latitude,float &longitude,float
 void getSpeedHeading(SFE_UBLOX_GNSS &myGNSS,float &speed,float &heading);
 bool setAcquisitionFrequency(SFE_UBLOX_GNSS &myGNSS,uint8_t rateHz);
 GPSSignalStrength evaluateSignal(SFE_UBLOX_GNSS &myGNSS);
-void requestAssistNow(SFE_UBLOX_GNSS &myGNSS);
+void requestOnlineAssistNow(SFE_UBLOX_GNSS &myGNSS,HTTPClient &ubloxTS);
 
 #endif

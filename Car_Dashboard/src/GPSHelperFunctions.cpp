@@ -1,4 +1,5 @@
 #include "../include/GPSFunctions.h"
+#include "../include/HTTPClientFunctions.h"
 
 #define GPS_INIT_MAX_RETRY 3
 
@@ -82,7 +83,20 @@ GPSSignalStrength evaluateSignal(SFE_UBLOX_GNSS &myGNSS)
     }
 }
 
-void requestAssistNow(SFE_UBLOX_GNSS &myGNSS)
+void requestOnlineAssistNow(SFE_UBLOX_GNSS &myGNSS,HTTPClient &ubloxTS)
 {
-    /*!requests AssistNow(TM)*/
+    /*!requests AssistNow(TM) online mode*/
+
+    
+#ifdef ROBUST_ASSISTNOW
+    myGNSS.setAckAiding(1);
+    myGNSS.pushAssistNowData(payload,payloadSize,SFE_UBLOX_MGA_ASSIST_ACK_ENQUIRE,10);
+#else
+    //myGNSS.pushAssistNowData(payload,payloadSize);
+#endif
+}
+
+void requestOfflineAssistNow(SFE_UBLOX_GNSS &myGNSS)
+{
+    /*!requests AssistNow(TM) offline mode*/
 }

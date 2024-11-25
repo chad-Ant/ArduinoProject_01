@@ -1,6 +1,7 @@
 #include "include/GPSFunctions.h"
 #include "include/ServoFunctions.h"
 #include "include/SegmentLEDFunctions.h"
+#include "include/WiFiFunctions.h"
 
 //Adafruit_SSD1306 display(OLED_SCREEN_WIDTH, OLED_SCREEN_HEIGT, &Wire, OLED_RESET);
 Servo servo_XAxis;
@@ -31,8 +32,11 @@ void setup()
   //GPS Shield setup
   bool GPSStartSuccess = initializeGPS(myGNSS);
 
-  //14
+  //14-Segment setup
   bool SegLEDStartSuccess = initializeSegmentLED(alpha4);
+
+  //Wifi setup
+  bool initializeWifi();
 }
 
 void loop()
