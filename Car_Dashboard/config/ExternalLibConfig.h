@@ -11,5 +11,6 @@
 #include <WiFi101.h>
 #include <ArduinoHttpClient.h>
 #include <cmath>
+#include <memory>
 
 #endif
