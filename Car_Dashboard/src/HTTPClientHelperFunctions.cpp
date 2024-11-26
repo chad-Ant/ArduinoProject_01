@@ -1,10 +1,8 @@
 #include "../include/HTTPClientFunctions.h"
 #include "../include/WiFiFunctions.h"
 
-HTTPClient* initializeHTTPInstance(const String URL){
-    if (WiFi.status != WL_CONNECTED) return nullptr;
-    WiFiClient client;
-    HTTPClient http(client,URL,);
-    
-    return *http;
+bool initializeHTTPInstance(WiFiClient &wifi, HTTPClient &http, const String URL){
+    if (WiFi.status != WL_CONNECTED) return false;
+    http = HttpClient(wifi,http,HTTPSPort);
+    return true;
 }
