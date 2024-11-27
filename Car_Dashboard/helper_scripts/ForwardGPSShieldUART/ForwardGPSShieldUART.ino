@@ -1,6 +1,6 @@
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(115200);
+  Serial.begin(9600);
   while(!Serial);
   Serial.println("Serial started.");
 
@@ -30,8 +30,8 @@ void loop() {
     uint8_t bufferWrite[256];
     int sendlen = lenWrite;
     if (lenWrite > sizeof(bufferWrite)) sendlen = sizeof(bufferWrite);
-    Serial1.readBytes(bufferWrite, sendlen);
-    Serial.write(bufferWrite, sendlen);
+    Serial.readBytes(bufferWrite, sendlen);
+    Serial1.write(bufferWrite, sendlen);
     lenWrite -=sendlen;
   }
 }
