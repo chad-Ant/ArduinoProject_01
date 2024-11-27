@@ -3,6 +3,10 @@
         "mathhelperfunctions": "cpp",
         "cstdlib": "cpp",
         "xutility": "cpp",
-        "cstddef": "cpp"
+        "cstddef": "cpp",
+        "memory": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp"
     }
 }

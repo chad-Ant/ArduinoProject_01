@@ -14,7 +14,9 @@ bool initializeGPS(SFE_UBLOX_GNSS &myGNSS)
         Serial1.begin(GPSBaudrate_Custom);
         if (myGNSS.begin(Serial1))
         {
+#ifndef ENABLE_NMEA
             myGNSS.setUART1Output(COM_TYPE_UBX);
+#endif
             if (myGNSS.getDynamicModel() != DYN_MODEL_AUTOMOTIVE)
                 myGNSS.setDynamicModel(DYN_MODEL_AUTOMOTIVE);
 
@@ -83,17 +85,22 @@ GPSSignalStrength evaluateSignal(SFE_UBLOX_GNSS &myGNSS)
     }
 }
 
-void requestOnlineAssistNow(SFE_UBLOX_GNSS &myGNSS,HTTPClient &ubloxTS)
+void requestOnlineAssistNow(SFE_UBLOX_GNSS &myGNSS,HttpClient &ubloxTS)
 {
     /*!requests AssistNow(TM) online mode*/
+    char requestBuffer[128] = "";
+    sprintf(requestBuffer,GETRequest_Online,AssistNowToken);
+    ubloxTS.get(requestBuffer);
 
-    
+    if (ubloxTS.responseStatusCode() == 200 && payload.length() > 0){
+        String payload = ubloxTS.responseBody();
 #ifdef ROBUST_ASSISTNOW
-    myGNSS.setAckAiding(1);
-    myGNSS.pushAssistNowData(payload,payloadSize,SFE_UBLOX_MGA_ASSIST_ACK_ENQUIRE,10);
+        myGNSS.setAckAiding(1);
+        myGNSS.pushAssistNowData(payload,payload.length(),SFE_UBLOX_MGA_ASSIST_ACK_ENQUIRE,100);
 #else
-    //myGNSS.pushAssistNowData(payload,payloadSize);
+        myGNSS.pushAssistNowData(payload,payload.length());
 #endif
+    }
 }
 
 void requestOfflineAssistNow(SFE_UBLOX_GNSS &myGNSS)

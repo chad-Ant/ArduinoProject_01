@@ -7,8 +7,4 @@
 constexpr uint16_t HTTPPort = 80;
 constexpr uint16_t HTTPSPort = 443;
 
-char URLSite[URL_BUFFER_SIZE] = "";
-int payloadSize = 0;
-String payload;
-
 #endif
