@@ -85,15 +85,15 @@ GPSSignalStrength evaluateSignal(SFE_UBLOX_GNSS &myGNSS)
     }
 }
 
-void requestOnlineAssistNow(SFE_UBLOX_GNSS &myGNSS,HttpClient &ubloxTS)
+void requestOnlineAssistNow(SFE_UBLOX_GNSS &myGNSS,HttpClient *ubloxTS)
 {
     /*!requests AssistNow(TM) online mode*/
     char requestBuffer[128] = "";
     sprintf(requestBuffer,GETRequest_Online,AssistNowToken);
-    ubloxTS.get(requestBuffer);
 
-    if (ubloxTS.responseStatusCode() == 200 && payload.length() > 0){
-        String payload = ubloxTS.responseBody();
+    String payload = HTTPGet(ubloxTS,requestBuffer,"INVALID");
+
+    if (payload != "INVALID" && payload.length() > 0){   
 #ifdef ROBUST_ASSISTNOW
         myGNSS.setAckAiding(1);
         myGNSS.pushAssistNowData(payload,payload.length(),SFE_UBLOX_MGA_ASSIST_ACK_ENQUIRE,100);
@@ -103,7 +103,7 @@ void requestOnlineAssistNow(SFE_UBLOX_GNSS &myGNSS,HttpClient &ubloxTS)
     }
 }
 
-void requestOfflineAssistNow(SFE_UBLOX_GNSS &myGNSS)
+void requestOfflineAssistNow(SFE_UBLOX_GNSS &myGNSS, HttpClient *ubloxTS)
 {
-    /*!requests AssistNow(TM) offline mode*/
+    /*!requests AssistNow(TM) offline mode (TODO)*/
 }

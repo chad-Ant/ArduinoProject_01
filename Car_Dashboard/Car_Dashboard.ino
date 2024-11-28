@@ -2,16 +2,15 @@
 #include "include/ServoFunctions.h"
 #include "include/SegmentLEDFunctions.h"
 #include "include/WiFiFunctions.h"
+#include "include/HTTPClientFunctions.h"
 
 //Adafruit_SSD1306 display(OLED_SCREEN_WIDTH, OLED_SCREEN_HEIGT, &Wire, OLED_RESET);
 Servo servo_XAxis;
 Servo servo_YAxis;
 SFE_UBLOX_GNSS myGNSS;
-
-long lastTime = 0;
-float lat, lon, alt;
-
 Adafruit_AlphaNum4 alpha4 = Adafruit_AlphaNum4();
+HttpClient *ubloxTS = nullptr;
+
 PinStatus LED_on = HIGH;
 
 int i = 0;
@@ -37,10 +36,16 @@ void setup()
 
   //Wifi setup
   bool initializeWifi();
+
+  //AssistNow GPS setup
+  ubloxTS = initializeHTTPInstance(AssistNowServer1);
 }
 
 void loop()
-{ 
+{
+  static long lastTime;
+  static float lat,lon,alt;
+
   getLatLongAlt(myGNSS,lat,lon,alt);
   writeFloatLED_Mirror(alpha4,alt);
   Serial.println(alt);
