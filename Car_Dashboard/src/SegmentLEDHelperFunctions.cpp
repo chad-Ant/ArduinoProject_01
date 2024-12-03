@@ -173,6 +173,12 @@ void adjustLEDBrightness(Adafruit_AlphaNum4 &alpha4, uint8_t ambientLuminosity)
     alpha4.setBrightness(LUT_5_15[ambientLuminosity]);
 }
 
+void loadingAnimation(Adafruit_AlphaNum4 &alpha4){
+    static uint8_t currentPosition = 1;
+    static uint16_t currentSegment = 0x1;
+    
+}
+
 void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4,float number)
 {
     DigitMapping LEDBuffer[4] = {
@@ -208,8 +214,8 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4,float number)
         LEDBuffer[3] = MINUS_SIGN;
     }
     else if (number == 0){
-        LEDBuffer[3] = NUM_0_DP_MIRROR;
-        LEDBuffer[2] = NUM_0_MIRROR;
+        LEDBuffer[0] = NUM_0_DP_MIRROR;
+        LEDBuffer[1] = NUM_0_MIRROR;
     }
     else
     {

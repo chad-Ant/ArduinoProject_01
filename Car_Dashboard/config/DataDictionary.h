@@ -15,7 +15,7 @@ unsigned constexpr long WIFI_TIMEOUT_MSEC =         10000;
 constexpr int URL_BUFFER_SIZE =                     256;
 
 unsigned constexpr long GPSBaudrate_Default =       9600;
-unsigned constexpr long GPSBaudrate_Custom =        38400;
+unsigned constexpr long GPSBaudrate_Custom =        115200;
 constexpr char AssistNowToken[] =                   "";
 constexpr char AssistNowServer1[] =                 "online-live1.services.u-blox.com";
 constexpr char AssistNowServer2[] =                 "online-live2.services.u-blox.com";

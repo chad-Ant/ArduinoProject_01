@@ -1,12 +1,12 @@
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial);
   Serial.println("Serial started.");
 
   pinMode(7, OUTPUT);
   digitalWrite(7, HIGH);
-  Serial1.begin(9600);
+  Serial1.begin(115200);
   while(!Serial1);
   Serial.println("GPS module started.");
 }
