@@ -81,6 +81,9 @@ enum DigitMapping
     NONE_TO_DISPLAY = 0x0
 };
 
+typedef uint64_t LEDFrame; 
+//bit 0-15 -> LED 0, bit 16-31 -> LED 1, bit 32-47 -> LED 2, bit 48-63 -> LED 3
+
 constexpr uint8_t LUT_5_15[256] = {
     5, 6, 7, 7, 8, 8, 9, 9, 9, 9, 9, 9, 10, 10,
     10, 10, 10, 10, 10, 10, 10, 11, 11, 11,
@@ -108,6 +111,10 @@ constexpr uint8_t LUT_5_15[256] = {
     15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
     15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
     15, 15};
+
+constexpr LEDFrame LoadAnimation[12] = {
+    0x1, 0x10000, 0x100000000, 0x1000000000000, 0x2000000000000, 0x4000000000000, 0x8000000000000, 0x800000000, 0x80000, 0x8, 0x16, 0x32
+};
 
 bool initializeSegmentLED(Adafruit_AlphaNum4 &alpha4);
 void adjustLEDBrightness(Adafruit_AlphaNum4 &alpha4, uint8_t ambientLuminosity);

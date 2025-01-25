@@ -173,10 +173,23 @@ void adjustLEDBrightness(Adafruit_AlphaNum4 &alpha4, uint8_t ambientLuminosity)
     alpha4.setBrightness(LUT_5_15[ambientLuminosity]);
 }
 
-void loadingAnimation(Adafruit_AlphaNum4 &alpha4){
-    static uint8_t currentPosition = 1;
-    static uint16_t currentSegment = 0x1;
+void Animation(Adafruit_AlphaNum4 &alpha4,LEDFrame Animation[],bool ResetAnimation){
+    //todo: add overflow protection by loop back to 0
+    static uint16_t animationIndex = 0;
+
+    if (ResetAnimation || animationIndex > sizeof(Animation)) {
+        animationIndex = 0;
+    }
+
+    alpha4.clear();
+    alpha4.writeDigitRaw(0,Animation[animationIndex] & 0xFFFF);
+    alpha4.writeDigitRaw(1,(Animation[animationIndex] & 0xFFFF0000)>>16);
+    alpha4.writeDigitRaw(2,(Animation[animationIndex] & 0xFFFF00000000)>>32);
+    alpha4.writeDigitRaw(3,(Animation[animationIndex] & 0xFFFF000000000000)>>48);
+    alpha4.writeDisplay();
     
+    animationIndex += 1;
+    return;
 }
 
 void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4,float number)
