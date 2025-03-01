@@ -9,6 +9,9 @@
 #define SERIAL_BAUDRATE                             115200U
 #define STATUS_INDICATOR                            LED_BUILTIN
 
+#define CAN_STD_ADDRESSING 1
+//#define CAN_EXT_ADDRESSING
+
 constexpr char WIFI_SSID[] =                        "";
 constexpr char WIFI_PASS[] =                        "";
 unsigned constexpr long WIFI_TIMEOUT_MSEC =         10000;
@@ -32,6 +35,8 @@ constexpr char cachePos[] =                         "lat=10.367506732991703;lon=
 #ifdef USE_DEFAULT_LOCATION //10.81532915851147, 106.6573371901137, 100km radius
 constexpr char cachePos[] =                         "lat=10.81532915851147;lon=106.6573371901137;alt=10.000000;pacc=100000.000000";
 #endif
+
+constexpr long CANBaudrate_Default =                500000;
 
 constexpr int MAX_XAXIS_ANGLE =                     180;
 constexpr int MAX_YAXIS_ANGLE =                     180;

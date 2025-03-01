@@ -10,6 +10,7 @@
 #include <SPI.h>
 #include <WiFi101.h>
 #include <ArduinoHttpClient.h>
+#include <CAN.h>
 #include <cmath>
 #include <memory>
 
