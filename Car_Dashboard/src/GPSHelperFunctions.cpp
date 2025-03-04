@@ -79,7 +79,6 @@ GPSSignalStrength evaluateSignal(SFE_UBLOX_GNSS &myGNSS)
     case 7:
     case 8:
         return GOOD;
-    case 9:
     default:
         return EXCELLENT;
     }

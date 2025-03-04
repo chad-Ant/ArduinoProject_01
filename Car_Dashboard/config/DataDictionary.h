@@ -37,6 +37,8 @@ constexpr char cachePos[] =                         "lat=10.81532915851147;lon=1
 #endif
 
 constexpr long CANBaudrate_Default =                500000;
+#define CAN_STD_ADDRESSING 1
+//#define CAN_EXT_ADDRESSING 
 
 constexpr int MAX_XAXIS_ANGLE =                     180;
 constexpr int MAX_YAXIS_ANGLE =                     180;
