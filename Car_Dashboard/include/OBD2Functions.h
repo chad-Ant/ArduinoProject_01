@@ -33,7 +33,7 @@ struct OBD2Config{
     uint32_t CANBaudrate;
     CAN_TxAddress TxAddress;
     CAN_RxAddress RxAddress;
-    OBD2_S1Command supportedPIDs[16];
+    uint64_t supportedPIDs[7];
 };
 
 #endif

@@ -12,27 +12,30 @@ bool getSupportedPIDs(OBD2Config &config,time_t timeout){
     if (!CAN){
         return false;
     }
-    static char supportedPIDs[4] = {0x00,0x00,0x00,0x00};
-
-    for (int i = 0x00; i < 0xE0; i += 0x20){
+    long PIDs = 0;
+    uint8_t tempPID = 0x00;
+    for (uint8_t i = 0x00; i < sizeof(config.supportedPIDs); i++){
         CAN.beginPacket(config.TxAddress,8);
         CAN.write(0x02);
         CAN.write(0x01);
-        CAN.write(i);
+        CAN.write(tempPID);
         CAN.endPacket();
-
+ 
         while (CAN.parsePacket() == 0) {
             //todo: add timeout here, return false if timeout
-            if (CAN.read() < 4) continue;
+            if (CAN.read() < 6) continue;
             if (CAN.read() != 0x41) continue;
-            if (CAN.read() != i) continue;
+            if (CAN.read() != tempPID) continue;
             //wait for response
         }
 
-        supportedPIDs[0] = CAN.read();
-        supportedPIDs[1] = CAN.read();
-        supportedPIDs[2] = CAN.read();
-        supportedPIDs[3] = CAN.read();
+        for (int j = 0; j < 4; j++){
+            PIDs <<=8;
+            PIDs |= CAN.read();
+        }
+        
+        config.supportedPIDs[i] = PIDs;
+        tempPID += 0x20;
     }
     return true;
 }
