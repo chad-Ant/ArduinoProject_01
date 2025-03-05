@@ -8,7 +8,7 @@ bool initializeOBD2(const OBD2Config config){
     return true;    
 }
 
-bool getSupportedPIDs(OBD2Config &config,time_t timeout){
+bool getSupportedPIDs(OBD2Config &config,long timeout){
     if (!CAN){
         return false;
     }
