@@ -1,36 +1,12 @@
 #include "../include/TimerFunctions.h"
 
-class Timer{
-    unsigned long m_setTime;
-    bool autoReset;
-    bool expired;
-
-    public:
-        Timer(unsigned long time, bool autoReset);
-        ~Timer();
-        bool startTimer();
-        void stopTimer();
-        void resetTimer();
-
-        void setTimer(unsigned long time);
-        void setAutoReset(bool autoReset);
-
-        unsigned long getTimer() const;
-        bool isAutoReset() const;
-        unsigned long getElapsedTime() const;
-        unsigned long getRemainingTime() const;
-        bool isExpired();
-    private:
-        unsigned long timer(bool reset);
-        unsigned long zTime;
-};
-
-Timer::Timer(unsigned long time, bool autoReset)
+Timer::Timer(unsigned long time, bool autoReset):
     m_setTime(time),
     autoReset(autoReset),
-    expired(true){
-    timer(true);
-}
+    expired(true),
+    zTime(millis()){
+    //do nothing
+    }
 
 Timer::~Timer(){
     //do nothing
@@ -46,11 +22,16 @@ unsigned long Timer::timer(bool reset){
 }
 
 bool Timer::startTimer(){
-    return timer(expired) >= m_setTime; 
+    if (expired){
+        timer(true);
+        expired = false;
+        return true;
+    }
+    return false;
 }
 
 void Timer::stopTimer(){
-    expired = timer(true) >= m_setTime;
+    expired = true;
 }
 
 void Timer::resetTimer(){
@@ -74,19 +55,20 @@ bool Timer::isAutoReset() const {
     return autoReset;
 }
 
-unsigned long Timer::getElapsedTime(){
+unsigned long Timer::getElapsedTime() const {
     return timer(false);
 }
 
-unsigned long Timer::getRemainingTime(){
+unsigned long Timer::getRemainingTime() const {
     unsigned long elapsedTime = timer(false);
     return m_setTime >= elapsedTime ? m_setTime - elapsedTime : 0;
 }
 
 bool Timer::isExpired(){
-    if (timer(false) >= m_setTime){
+    if (timer(false) >= m_setTime || !running){
         if (autoReset){
-            resetTimer();
+            timer(true);
+            expired = false;
         } else {
             expired = true;
         }
