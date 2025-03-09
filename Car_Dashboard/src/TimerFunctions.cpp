@@ -1,33 +1,52 @@
 #include "../include/TimerFunctions.h"
 
-inline bool timeout(unsigned long timer,unsigned long &lastTime){
-    if (timer < 1){
+/**
+ * @name timeout
+ * @brief Check if a generic task has timed out
+ * @return true if the task has timed out, false otherwise
+ */
+inline bool timeout(const unsigned long timer, unsigned long &lastRun){
+    if (timer < MIN_INTERVAL_MS){
         return true;
     }
     unsigned long currentTime = millis();
-    if (getInterval(lastTime,currentTime) >= timer){
-        lastTime = currentTime;
+    if (getInterval(lastRun,currentTime) >= timer){
+        lastRun = currentTime;
         return true;
     }
     return false;
 }
 
-inline bool taskScheduler(TaskSchedule &task){
-    if (!task.enabled || task.interval < 1){
+/**
+ * @name taskScheduler
+ * @brief Check if a defined task is allowed to run
+ * @return true if the task is allowed to run, false otherwise
+ */
+inline bool taskScheduler(const TaskSchedule &task, Task taskName, unsigned long &lastRun){
+    if (task.interval[taskName] < MIN_INTERVAL_MS || !task.enabled[taskName]){
         return false;
     }
     unsigned long currentTime = millis();
-    if (getInterval(task.lastRun,currentTime) >= task.interval){
-        task.lastRun = currentTime;
+    if (getInterval(lastRun[taskName],currentTime) >= task.interval[taskName]){
+        lastRun[taskName] = currentTime;
         return true;
     }
     return false;
 }
 
-inline void resetTask(TaskSchedule &task){
-    task.lastRun = 0;
+/**
+ * @name resetTask
+ * @brief Reset the task by setting the last run time to 0. That's it.
+ */
+inline void resetTask(Task taskName, unsigned long &lastRun){
+    lastRun[taskName] = 0;
 }
 
+/**
+ * @name getInterval (Helper function)
+ * @brief Get the interval between two times
+ * @return The interval between the two times
+ */
 inline unsigned long getInterval(unsigned long lastTime, unsigned long currentTime){
-    return (currentTime >= lastTime ? currentTime - lastTime : ULONG_MAX - lastTime + currentTime);
+    return (currentTime >= lastTime ? currentTime - lastTime : MAX_INTERVAL_MS - lastTime + currentTime);
 }

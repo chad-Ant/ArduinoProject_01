@@ -11,17 +11,25 @@ enum class Task{
     HTTP,
     WIFI,
     CAN,
-    COMMS
+    COMMS,
+    TASK_COUNT // This is a dummy task to get the number of tasks
 };
 
-struct TaskSchedule{
-    Task task;
-    unsigned long lastRun;
-    unsigned long interval;
-    bool enabled;
-}
+const uint8_t taskCount = static_cast<uint8_t>(Task::TASK_COUNT);
 
-inline bool taskScheduler(TaskSchedule &task);
-inline void resetTask(TaskSchedule &task);
+struct TaskSchedule{
+    Task task[taskCount];
+    unsigned long interval[taskCount];
+    bool enabled[taskCount];
+};
+
+static constexpr unsigned long MIN_INTERVAL_MS = 1;
+static constexpr unsigned long MAX_INTERVAL_MS = ULONG_MAX;
+
+extern unsigned long taskLastRun[taskCount];    //to be declared in Car_Dashboard.ino
+
+inline bool timeout(const unsigned long timer, unsigned long &lastRun);
+inline bool taskScheduler(const TaskSchedule &task, Task taskName, unsigned long &lastRun);
+inline void resetTask(Task taskName, unsigned long &lastRun);
 
 #endif
