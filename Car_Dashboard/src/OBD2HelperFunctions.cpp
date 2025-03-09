@@ -1,4 +1,5 @@
 #include "../include/OBD2Functions.h"
+#include "../include/TimerFunctions.h"
 
 bool initializeOBD2(const OBD2Config config){
     if (!CAN.begin(config.CANBaudrate)){
@@ -8,7 +9,7 @@ bool initializeOBD2(const OBD2Config config){
     return true;    
 }
 
-bool getSupportedPIDs(OBD2Config &config,long timeout){
+bool getSupportedPIDs(OBD2Config &config,long timeoutInterval){
     if (!CAN){
         return false;
     }
@@ -20,9 +21,9 @@ bool getSupportedPIDs(OBD2Config &config,long timeout){
         CAN.write(0x01);
         CAN.write(tempPID);
         CAN.endPacket();
- 
-        while (CAN.parsePacket() == 0) {
-            //todo: add timeout here, return false if timeout
+        
+        unsigned long lastRun = millis();
+        while (CAN.parsePacket() == 0 || !timeout(timeoutInterval,lastRun)){ {
             if (CAN.read() < 6) continue;
             if (CAN.read() != 0x41) continue;
             if (CAN.read() != tempPID) continue;

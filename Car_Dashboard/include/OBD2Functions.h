@@ -36,4 +36,8 @@ struct OBD2Config{
     uint64_t supportedPIDs[7];
 };
 
+bool initializeOBD2(const OBD2Config config);
+bool getSupportedPIDs(OBD2Config &config,long timeoutInterval);
+
+
 #endif
