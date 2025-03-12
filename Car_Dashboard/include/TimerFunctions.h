@@ -28,7 +28,7 @@ static constexpr unsigned long MAX_INTERVAL_MS = ULONG_MAX;
 
 extern unsigned long taskLastRun[taskCount];    //to be declared in Car_Dashboard.ino
 
-inline bool timeout(const unsigned long timer, unsigned long &lastRun);
+inline bool hasTimeElapsed(const unsigned long timer, unsigned long &startTime);
 inline bool taskScheduler(const TaskSchedule &task, Task taskName, unsigned long &lastRun);
 inline void resetTask(Task taskName, unsigned long &lastRun);
 

@@ -22,8 +22,8 @@ bool getSupportedPIDs(OBD2Config &config,long timeoutInterval){
         CAN.write(tempPID);
         CAN.endPacket();
         
-        unsigned long lastRun = millis();
-        while (CAN.parsePacket() == 0 || !timeout(timeoutInterval,lastRun)){ {
+        unsigned long thisRun = millis();
+        while (CAN.parsePacket() == 0 || !hasTimeElapsed(timeoutInterval,thisRun)){ {
             if (CAN.read() < 6) continue;
             if (CAN.read() != 0x41) continue;
             if (CAN.read() != tempPID) continue;

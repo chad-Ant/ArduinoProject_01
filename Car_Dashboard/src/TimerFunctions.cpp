@@ -4,14 +4,15 @@
  * @name timeout
  * @brief Check if a generic task has timed out
  * @return true if the task has timed out, false otherwise
+ * @note the parameter startTime must be initialized using millis() before each use
+ * @note example usage: startTime = millis(); while (!timeout(1000,startTime)) {do something}
  */
-inline bool timeout(const unsigned long timer, unsigned long &lastRun){
+inline bool hasTimeElapsed(const unsigned long timer, unsigned long &startTime){
     if (timer < MIN_INTERVAL_MS){
         return true;
     }
     unsigned long currentTime = millis();
-    if (getInterval(lastRun,currentTime) >= timer){
-        lastRun = currentTime;
+    if (getInterval(startTime,currentTime) >= timer){
         return true;
     }
     return false;
@@ -39,7 +40,7 @@ inline bool taskScheduler(const TaskSchedule &task, Task taskName, unsigned long
  * @brief Reset the task by setting the last run time to 0. That's it.
  */
 inline void resetTask(Task taskName, unsigned long &lastRun){
-    lastRun[taskName] = 0;
+    lastRun[taskName] = millis();
 }
 
 /**
