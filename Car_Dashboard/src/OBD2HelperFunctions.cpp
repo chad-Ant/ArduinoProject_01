@@ -39,6 +39,7 @@ bool getSupportedPIDs(OBD2Config &config,long timeoutInterval){
         tempPID += 0x20;
     }
     return true;
+    }
 }
 
 bool sendData(OBD2Command command){

@@ -13,5 +13,6 @@
 #include <CAN.h>
 #include <cmath>
 #include <memory>
+#include <climits>
 
 #endif
