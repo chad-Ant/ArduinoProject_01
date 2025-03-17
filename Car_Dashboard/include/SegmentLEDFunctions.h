@@ -5,25 +5,41 @@
 #include "../config/DataDictionary.h"
 
 enum DigitMapping
-{
-    NUM_0_MIRROR = 0x213F,
-    NUM_0_DP_MIRROR = 0x613F,
+{   
+    NUM_0 = 0x213F,
+    NUM_0_DP = 0x613F,
+    NUM_1 = 0x406,
+    NUM_1_DP = 0x4406,
     NUM_1_MIRROR = 0x130,
     NUM_1_DP_MIRROR = 0x4130,
+    NUM_2 = 0x88B,
+    NUM_2_DP = 0x488B,
     NUM_2_MIRROR = 0x2069,
     NUM_2_DP_MIRROR = 0x6069,
+    NUM_3 = 0x8F,
+    NUM_3_DP = 0x408F,
     NUM_3_MIRROR = 0x79,
     NUM_3_DP_MIRROR = 0x4079,
+    NUM_4 = 0xE6,
+    NUM_4_DP = 0x40E6,
     NUM_4_MIRROR = 0xF2,
     NUM_4_DP_MIRROR = 0x40F2,
+    NUM_5 = 0x2069,
+    NUM_5_DP = 0x6069,
     NUM_5_MIRROR = 0x88B,
     NUM_5_DP_MIRROR = 0x488B,
+    NUM_6 = 0xFD,
+    NUM_6_DP = 0x40FD,
     NUM_6_MIRROR = 0xDF,
     NUM_6_DP_MIRROR = 0x40DF,
+    NUM_7 = 0x7,
+    NUM_7_DP = 0x4007,
     NUM_7_MIRROR = 0x31,
     NUM_7_DP_MIRROR = 0x4031,
-    NUM_8_MIRROR = 0xFF,
-    NUM_8_DP_MIRROR = 0x40FF,
+    NUM_8 = 0xFF,
+    NUM_8_DP = 0x40FF,
+    NUM_9 = 0xEF,
+    NUM_9_DP = 0x40EF,
     NUM_9_MIRROR = 0xFB,
     NUM_9_DP_MIRROR = 0x40FB,
     CHAR_A_MIRROR = 0xF7,
@@ -117,8 +133,11 @@ constexpr LEDFrame LoadAnimation[12] = {
 };
 
 bool initializeSegmentLED(Adafruit_AlphaNum4 &alpha4);
+void clearSegmentLED(Adafruit_AlphaNum4 &alpha4);
 void adjustLEDBrightness(Adafruit_AlphaNum4 &alpha4, uint8_t ambientLuminosity);
+void Animation(Adafruit_AlphaNum4 &alpha4,LEDFrame Animation[],bool ResetAnimation);
 void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number);
 void writeStringLED_Mirror(Adafruit_AlphaNum4 &alpha4, const char *stringInput);
-
+void writeFloatLED(Adafruit_AlphaNum4 &alpha4, float number);
+void writeStringLED(Adafruit_AlphaNum4 &alpha4, const char *stringInput);
 #endif

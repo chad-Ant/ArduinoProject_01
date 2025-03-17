@@ -2,6 +2,7 @@
 #include "include/ServoFunctions.h"
 #include "include/SegmentLEDFunctions.h"
 #include "include/WiFiFunctions.h"
+#include "include/MathFunctions.h"
 
 //Adafruit_SSD1306 display(OLED_SCREEN_WIDTH, OLED_SCREEN_HEIGT, &Wire, OLED_RESET);
 Servo servo_XAxis;
@@ -18,6 +19,7 @@ int i = 0;
 
 void setup()
 {
+  
   //Debug setup
   Serial.begin(SERIAL_BAUDRATE);
   while (!Serial); //Wait for user to open terminal
@@ -27,7 +29,7 @@ void setup()
   /**/
 
   //Servo setup
-  bool servoStartSuccess = initializeServo(servo_XAxis,servo_YAxis);
+  //bool servoStartSuccess = initializeServo(servo_XAxis,servo_YAxis);
   
   //GPS Shield setup
   bool GPSStartSuccess = initializeGPS(myGNSS);
