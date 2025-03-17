@@ -39,5 +39,6 @@ struct OBD2Config{
 bool initializeOBD2(const OBD2Config config);
 bool getSupportedPIDs(OBD2Config &config,long timeoutInterval);
 
+const SPISettings SPICfg(10E6, MSBFIRST, SPI_MODE0);
 
 #endif

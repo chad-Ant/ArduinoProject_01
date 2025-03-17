@@ -1,6 +1,32 @@
 #include "../include/OBD2Functions.h"
 #include "../include/TimerFunctions.h"
 
+void writeRegister(uint8_t address, uint8_t value)
+{
+  SPI.beginTransaction(SPICfg);
+  digitalWrite(MCP2515_DEFAULT_CS_PIN, LOW);
+  SPI.transfer(0x02);
+  SPI.transfer(address);
+  SPI.transfer(value);
+  digitalWrite(MCP2515_DEFAULT_CS_PIN, HIGH);
+  SPI.endTransaction();
+}
+
+uint8_t readRegister(uint8_t address)
+{
+  uint8_t value;
+
+  SPI.beginTransaction(SPICfg);
+  digitalWrite(MCP2515_DEFAULT_CS_PIN, LOW);
+  SPI.transfer(0x03);
+  SPI.transfer(address);
+  value = SPI.transfer(0x00);
+  digitalWrite(MCP2515_DEFAULT_CS_PIN, HIGH);
+  SPI.endTransaction();
+
+  return value;
+}
+
 bool initializeOBD2(const OBD2Config config){
     if (!CAN.begin(config.CANBaudrate)){
         return false;
@@ -9,8 +35,16 @@ bool initializeOBD2(const OBD2Config config){
     return true;    
 }
 
+bool checkCANModule(){
+    writeRegister(0x0f, 0x80);          //0x0f = REG_CANCTRL
+    if (readRegister(0x0f) != 0x80){
+        return false;
+    }
+    return true;
+}
+
 bool getSupportedPIDs(OBD2Config &config,long timeoutInterval){
-    if (!CAN){
+    if (!checkCANModule()){
         return false;
     }
     long PIDs = 0;
@@ -23,7 +57,7 @@ bool getSupportedPIDs(OBD2Config &config,long timeoutInterval){
         CAN.endPacket();
         
         unsigned long thisRun = millis();
-        while (CAN.parsePacket() == 0 || !hasTimeElapsed(timeoutInterval,thisRun)){ {
+        while (CAN.parsePacket() == 0 || !isTimeout(timeoutInterval,thisRun)){ {
             if (CAN.read() < 6) continue;
             if (CAN.read() != 0x41) continue;
             if (CAN.read() != tempPID) continue;
@@ -42,9 +76,9 @@ bool getSupportedPIDs(OBD2Config &config,long timeoutInterval){
     }
 }
 
-bool sendData(OBD2Command command){
-    if (!CAN){
+bool sendData(const OBD2_S1Command command){
+    if (!checkCANModule()){
         return false;
     }
-    CAN.write();
+    return true;
 }

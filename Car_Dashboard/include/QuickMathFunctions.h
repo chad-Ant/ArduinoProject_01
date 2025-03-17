@@ -24,4 +24,36 @@ inline int64_t div1000Approx(int64_t number){
    return (536871 * number) >> 29;
 }
 
+inline uint8_t counterU8(bool reset = false){
+    static uint8_t counter = 0;
+    if (reset){
+        counter = 0;
+    }
+    return counter++;
+}
+
+inline uint16_t counterU16(bool reset = false){
+    static uint16_t counter = 0;
+    if (reset){
+        counter = 0;
+    }
+    return counter++;
+}
+
+inline uint32_t counterU32(bool reset = false){
+    static uint32_t counter = 0;
+    if (reset){
+        counter = 0;
+    }
+    return counter++;
+}
+
+inline uint64_t counterU64(bool reset = false){
+    static uint64_t counter = 0;
+    if (reset){
+        counter = 0;
+    }
+    return counter++;
+}
+
 #endif
