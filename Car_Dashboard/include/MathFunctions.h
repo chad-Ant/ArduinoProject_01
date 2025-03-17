@@ -21,6 +21,6 @@ class MovingAverage{
         MovingAverage(const MovingAverage&) = delete;
         MovingAverage& operator=(const MovingAverage&) = delete;
         void execute(float &input,float &output, bool reset = false);
-}
+};
 
 #endif

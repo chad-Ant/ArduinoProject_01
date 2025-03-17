@@ -2,7 +2,6 @@
 #include "include/ServoFunctions.h"
 #include "include/SegmentLEDFunctions.h"
 #include "include/WiFiFunctions.h"
-#include "include/MathFunctions.h"
 
 //Adafruit_SSD1306 display(OLED_SCREEN_WIDTH, OLED_SCREEN_HEIGT, &Wire, OLED_RESET);
 Servo servo_XAxis;

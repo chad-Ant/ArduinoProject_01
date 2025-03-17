@@ -16,28 +16,31 @@ enum CAN_RxAddress{
 //https://en.wikipedia.org/wiki/OBD-II_PIDs#Query
 
 enum OBD2_S1Command{
-    NONE =          0x000000,
-    RPM =           0x02010C,
-    SPEED =         0x02010D,
-    GEAR_RTIO =    0x0201A4,
-    AIR_PRES =      0x020133,
-    ODOMETER =      0x0201A6,
-    FUEL_LVL =      0x02012F,
-    ENGINE_TEMP =    0x020105,
-    FUEL_RATE =     0x02015E,
-    ENGINE_LOAD =   0x020104,
-    THROTTLE_POSN =  0x020111
+    NONE =          0x00,
+    RPM =           0x0C,
+    SPEED =         0x0D,
+    GEAR_RTIO =    0xA4,
+    AIR_PRES =      0x33,
+    ODOMETER =      0xA6,
+    FUEL_LVL =      0x2F,
+    ENGINE_TEMP =    0x05,
+    FUEL_RATE =     0x5E,
+    ENGINE_LOAD =   0x04,
+    THROTTLE_POSN =  0x11
 };
 
 struct OBD2Config{
     uint32_t CANBaudrate;
     CAN_TxAddress TxAddress;
     CAN_RxAddress RxAddress;
-    uint64_t supportedPIDs[7];
+    uint32_t supportedPIDs[7];
 };
 
 bool initializeOBD2(const OBD2Config config);
+bool checkCANModule();
 bool getSupportedPIDs(OBD2Config &config,long timeoutInterval);
+bool sendS1Command(OBD2Config &config, const OBD2_S1Command command);
+
 
 const SPISettings SPICfg(10E6, MSBFIRST, SPI_MODE0);
 
