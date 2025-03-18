@@ -9,7 +9,7 @@ int readPosition(Servo &servo_x){
     return servo_x.read();
 }
 
-void writePosition(Servo &servo_x, int position, int min, int max){
+void writePosition(Servo &servo_x, int position, const int min, const int max){
     position = position >= min ? (position <= max ? position : max) : min;
     servo_x.write(position);
 }

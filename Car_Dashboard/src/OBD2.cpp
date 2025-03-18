@@ -102,6 +102,7 @@ bool sendS1Command(OBD2Config &config, const OBD2_S1Command command){
 }
 
 bool receiveS1Command(OBD2Config &config, const char *outputBuffer, unsigned long timeout, OBD2_S1Command &commandRx){
+    /* todo: fix bug line 112, 119
     if (!outputBuffer){
         return false;
     }
@@ -119,4 +120,5 @@ bool receiveS1Command(OBD2Config &config, const char *outputBuffer, unsigned lon
         outputBuffer[i] = CAN.read();
     }
     return true;
+    */
 }
