@@ -6,7 +6,7 @@
 
 bool splitByte(const char* input, char* outputBuffer,const size_t outputBufferLength, size_t byteLength, size_t byteOffset);
 
-class MovingAverage{
+class SimpleMovingAverage{
     private:
         size_t windowSize;
         float* outputBuffer;
@@ -15,11 +15,11 @@ class MovingAverage{
         float sum;
 
     public:
-        MovingAverage(const uint32_t wSize);
-        ~MovingAverage();
+        SimpleMovingAverage(const uint32_t wSize);
+        ~SimpleMovingAverage();
 
-        MovingAverage(const MovingAverage&) = delete;
-        MovingAverage& operator=(const MovingAverage&) = delete;
+        SimpleMovingAverage(const SimpleMovingAverage&) = delete;
+        SimpleMovingAverage& operator=(const SimpleMovingAverage&) = delete;
         void execute(float &input,float &output, bool reset = false);
 };
 
