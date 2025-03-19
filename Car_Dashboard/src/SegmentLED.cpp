@@ -191,7 +191,6 @@ bool initializeSegmentLED(Adafruit_AlphaNum4 &alpha4){
 
     unsigned long startTimeLED = millis();
     while (!isTimeout(500,startTimeLED)); //wait for 500ms
-
     alpha4.clear();
     alpha4.writeDisplay();
 
@@ -204,7 +203,7 @@ void clearSegmentLED(Adafruit_AlphaNum4 &alpha4){
 }
 
 void adjustLEDBrightness(Adafruit_AlphaNum4 &alpha4, uint8_t ambientLuminosity){
-    alpha4.setBrightness(LUT_5_15[ambientLuminosity]);
+    alpha4.setBrightness(ambientLuminosity >= 80 ? ambientLuminosity >> 4 : 5); //limit lowest luminosity to 5
 }
 
 void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number){
