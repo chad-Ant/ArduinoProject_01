@@ -34,6 +34,10 @@ constexpr char cachePos[] =                         "lat=10.81532915851147;lon=1
 #endif
 
 constexpr long CANBaudrate_Default =                500000;
+//SPI interface pins, avoid using these for other purposes
+//#define MCP2515_DEFAULT_CS_PIN          3
+//#define MCP2515_DEFAULT_INT_PIN         7
+
 
 constexpr int MAX_XAXIS_ANGLE =                     180;
 constexpr int MAX_YAXIS_ANGLE =                     180;
