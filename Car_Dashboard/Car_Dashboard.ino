@@ -3,6 +3,7 @@
 #include "include/TimerFunctions.h" //works
 #include "include/QuickMathFunctions.h" //works
 #include "include/WiFiFunctions.h"
+#include "include/GPSFunctions.h"
 
 //Adafruit_SSD1306 display(OLED_SCREEN_WIDTH, OLED_SCREEN_HEIGT, &Wire, OLED_RESET);
 Servo servo_XAxis;

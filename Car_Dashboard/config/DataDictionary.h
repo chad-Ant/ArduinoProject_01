@@ -20,7 +20,7 @@ unsigned constexpr long GPSBaudrate_Custom =        115200;
 constexpr char AssistNowToken[] =                   ""; //add token before compiling
 constexpr char AssistNowServer1[] =                 "online-live1.services.u-blox.com";
 constexpr char AssistNowServer2[] =                 "online-live2.services.u-blox.com";
-constexpr char GETRequest_Online[] =                "%s/GetOnlineData.ashx?token=%s;gnss=gps,glo,qzss,gal;datatype=eph,alm,aux,pos;";
+constexpr char GETRequest_Online[] =                "%s/GetOnlineData.ashx?token=%s;gnss=gps,glo,qzss,gal;datatype=eph,alm,aux,pos;%s";
 constexpr char GETRequest_Offline[] =               "%s/GetOfflineData.ashx?token=%s;gnss=gps,glo,gal;period=5;resolution=1";
 ///GetOnlineData.ashx?token=;gnss=gps,glo,qzss,gal;datatype=eph,alm,aux,pos;lat=10.815329;lon=106.657337;alt=10.000000;pacc=10000.000000
 #define USE_DEFAULT_LOCATION 1
