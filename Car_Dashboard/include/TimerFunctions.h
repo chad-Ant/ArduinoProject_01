@@ -42,4 +42,7 @@ inline void resetTask(unsigned long &startTime){
     startTime = millis();
 }
 
+bool getDate(uint8_t &_date, uint8_t &_month, uint16_t &_year, const uint8_t timezone);
+bool getTime(uint8_t &_hour, uint8_t &_minute, uint8_t &_second, const uint8_t timezone);
+
 #endif

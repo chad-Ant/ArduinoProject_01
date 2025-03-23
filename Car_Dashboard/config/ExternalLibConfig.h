@@ -7,12 +7,16 @@
 #include <Arduino.h>
 #include <Adafruit_GFX.h>
 #include "Adafruit_LEDBackpack.h"
+#include "LowPower.h"
 #include <SPI.h>
 #include <WiFi101.h>
 #include <ArduinoHttpClient.h>
+#include <WiFiUdp.h>
 #include <CAN.h>
 #include <cmath>
 #include <memory>
 #include <climits>
+#include "time.h"
+#include <TimeLib.h>
 
 #endif

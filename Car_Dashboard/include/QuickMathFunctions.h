@@ -24,6 +24,11 @@ inline int64_t div1000Approx(int64_t number){
    return (536871 * number) >> 29;
 }
 
+/*
+* Counter functions
+*WARNING: For main code only
+*/
+
 inline uint8_t counterU8(bool reset = false){
     static uint8_t counter = 0;
     if (reset){
