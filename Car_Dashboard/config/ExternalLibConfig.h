@@ -18,5 +18,6 @@
 #include <climits>
 #include "time.h"
 #include <TimeLib.h>
+#include <RTCZero.h>
 
 #endif

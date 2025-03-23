@@ -42,7 +42,10 @@ inline void resetTask(unsigned long &startTime){
     startTime = millis();
 }
 
-bool getDate(uint8_t &_date, uint8_t &_month, uint16_t &_year, const uint8_t timezone);
-bool getTime(uint8_t &_hour, uint8_t &_minute, uint8_t &_second, const uint8_t timezone);
+bool getDate(uint8_t &_date, uint8_t &_month, uint16_t &_year, int8_t timezone = 0);
+bool getTime(uint8_t &_hour, uint8_t &_minute, uint8_t &_second, int8_t timezone = 0);
+bool setRTCDateTime(RTCZero &rtc, int8_t timezone = LOCAL_TIMEZONE);
+bool setAlarmTime(RTCZero &rtc, uint8_t hour, uint8_t minute, uint8_t second);
+void armAlarm(RTCZero &rtc, uint8_t alarmType, voidFuncPtr callback, bool enable);
 
 #endif
