@@ -101,8 +101,7 @@ void requestOnlineAssistNow(SFE_UBLOX_GNSS &myGNSS,HttpClient *ubloxTS,const Ass
     }
 }
 
-void requestOfflineAssistNow(SFE_UBLOX_GNSS &myGNSS, HttpClient *ubloxTS)
-{
+void requestOfflineAssistNow(SFE_UBLOX_GNSS &myGNSS, HttpClient *ubloxTS,const AssistNowServer server){
     /*!requests AssistNow(TM) offline mode*/
     char requestBuffer[160] = "";
     if (server == ONLINE1){

@@ -4,8 +4,6 @@
 #include "../config/ExternalLibConfig.h"
 #include "../config/DataDictionary.h"
 
-bool splitByte(const char* input, char* outputBuffer,const size_t outputBufferLength, size_t byteLength, size_t byteOffset);
-
 enum FilterWSize{
     SIZE_8 = 8,
     SIZE_16 = 16,
@@ -20,12 +18,6 @@ class SimpleMovingAverage{
         float reciprocalDivisor;
         float sum;
         bool outputValid;
-
-        static constexpr bool isPowerOfTwo(FilterWSize size) {
-            return size && !(size & (size - 1));
-        }
-        static_assert(isPowerOfTwo(SIZE_8) && isPowerOfTwo(SIZE_16) && isPowerOfTwo(SIZE_32),
-                      "Window sizes must be powers of 2");
 
     public:
         SimpleMovingAverage(const FilterWSize wSize);

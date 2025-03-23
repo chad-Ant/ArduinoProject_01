@@ -1,36 +1,46 @@
 #include "../include/TimerFunctions.h"
 #include "../include/WiFiFunctions.h"
 
-bool getDate(uint8_t &_date, uint8_t &_month, uint16_t &_year, int8_t timezone){ //areas with fractional timezone offsets not supported
+void checkTimeValidity(uint8_t &tHour, uint8_t &tMinute, uint8_t &tSecond){
+    tHour = tHour > 23 ? 23 : tHour;
+    tMinute = tMinute > 59 ? 59 : tMinute;
+    tSecond = tSecond > 59 ? 59 : tSecond;
+}
+
+void checkTimezoneValidity(int8_t &timezone){
+    timezone = timezone < -12 ? -12 : (timezone > 12 ? 12 : timezone);
+}
+
+bool getNTPDate(uint8_t &tDate, uint8_t &tMonth, uint16_t &tYear, int8_t timezone){ //areas with fractional timezone offsets not supported
     if (!isWifiConnected()) return false;
-    unsigned long unixTime = getUnixTime();
-    if (unixTime == 0) return false;
+    unsigned long unixTime = 0;
+    if (!getUnixTime(unixTime)) return false;
     checkTimezoneValidity(timezone);
     unixTime += timezone * 3600;
     time_t t = unixTime;
-    _year = year(t);
-    _month = month(t);
-    _date = day(t);
+    tYear = year(t);
+    tMonth = month(t);
+    tDate = day(t);
     return true;
 }
 
-bool getTime(uint8_t &_hour, uint8_t &_minute, uint8_t &_second, int8_t timezone){
+bool getNTPTime(uint8_t &tHour, uint8_t &tMinute, uint8_t &tSecond, int8_t timezone){
     if (!isWifiConnected()) return false;
-    unsigned long unixTime = getUnixTime();
-    if (unixTime == 0) return false;
+    unsigned long unixTime = 0;
+    if (!getUnixTime(unixTime)) return false;
     checkTimezoneValidity(timezone);
     unixTime += timezone * 3600;
     time_t t = unixTime;
-    _hour = hour(t);
-    _minute = minute(t);
-    _second = second(t);
+    tHour = hour(t);
+    tMinute = minute(t);
+    tSecond = second(t);
     return true;
 }
 
 bool setRTCDateTime(RTCZero &rtc, int8_t timezone){
     if (!isWifiConnected()) return false;
-    unsigned long unixTime = getUnixTime();
-    if (unixTime == 0) return false;
+    unsigned long unixTime = 0;
+    if (!getUnixTime(unixTime)) return false;
     checkTimezoneValidity(timezone);
     unixTime += timezone * 3600;
     time_t t = unixTime;
@@ -39,13 +49,25 @@ bool setRTCDateTime(RTCZero &rtc, int8_t timezone){
     return true;
 }
 
-void setAlarmTime(RTCZero &rtc, uint8_t hour, uint8_t minute, uint8_t second){
-    checkTimeValidity(hour, minute, second);
-    rtc.setAlarmTime(hour, minute, second);
+void getRTCDate(RTCZero &rtc, uint8_t &tDate, uint8_t &tMonth, uint16_t &tYear){
+    tDate = rtc.getDay();
+    tMonth = rtc.getMonth();
+    tYear = rtc.getYear();
+}
+
+void getRTCTime(RTCZero &rtc, uint8_t &tHour, uint8_t &tMinute, uint8_t &tSecond){
+    tHour = rtc.getHours();
+    tMinute = rtc.getMinutes();
+    tSecond = rtc.getSeconds();
+}
+
+void setAlarmTime(RTCZero &rtc, uint8_t tHour, uint8_t tMinute, uint8_t tSecond){
+    checkTimeValidity(tHour, tMinute, tSecond);
+    rtc.setAlarmTime(tHour, tMinute, tSecond);
 }
 
 void armAlarm(RTCZero &rtc, RTCZero::Alarm_Match alarmType, voidFuncPtr callback, bool enable){
-    if callback == nullptr return;
+    if (callback == nullptr) return;
     if (enable){
         rtc.enableAlarm(alarmType);
         rtc.attachInterrupt(callback);
@@ -53,14 +75,4 @@ void armAlarm(RTCZero &rtc, RTCZero::Alarm_Match alarmType, voidFuncPtr callback
         rtc.detachInterrupt();
         rtc.disableAlarm();
     }
-}
-
-void checkTimeValidity(uint8_t &hour, uint8_t &minute, uint8_t &second){
-    hour = hour > 23 ? 23 : hour;
-    minute = minute > 59 ? 59 : minute;
-    second = second > 59 ? 59 : second;
-}
-
-void checkTimezoneValidity(int8_t &timezone){
-    timezone = timezone < -12 ? -12 : (timezone > 12 ? 12 : timezone);
 }
