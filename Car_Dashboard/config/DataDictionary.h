@@ -11,7 +11,7 @@
 
 constexpr char WIFI_SSID[] =                        "";
 constexpr char WIFI_PASS[] =                        "";
-unsigned constexpr long WIFI_TIMEOUT_MSEC =         10000;
+unsigned constexpr long WIFI_TIMEOUT_MSEC =         20000;
 constexpr int URL_BUFFER_SIZE =                     256;
 
 #define GPS_REFRESH_RATE                            2U

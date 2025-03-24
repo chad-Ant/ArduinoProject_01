@@ -37,6 +37,22 @@ bool getNTPTime(uint8_t &tHour, uint8_t &tMinute, uint8_t &tSecond, int8_t timez
     return true;
 }
 
+bool getNTPDateTime(uint8_t &tHour, uint8_t &tMinute, uint8_t &tSecond, uint8_t &tDate, uint8_t &tMonth, uint16_t &tYear, int8_t timezone){
+    if (!isWifiConnected()) return false;
+    unsigned long unixTime = 0;
+    if (!getUnixTime(unixTime)) return false;
+    checkTimezoneValidity(timezone);
+    unixTime += timezone * 3600;
+    time_t t = unixTime;
+    tYear = year(t);
+    tMonth = month(t);
+    tDate = day(t);
+    tHour = hour(t);
+    tMinute = minute(t);
+    tSecond = second(t);
+    return true;
+}
+
 bool setRTCDateTime(RTCZero &rtc, int8_t timezone){
     if (!isWifiConnected()) return false;
     unsigned long unixTime = 0;

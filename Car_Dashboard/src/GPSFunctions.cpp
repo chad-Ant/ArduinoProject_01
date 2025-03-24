@@ -90,15 +90,14 @@ void requestOnlineAssistNow(SFE_UBLOX_GNSS &myGNSS,HttpClient *ubloxTS,const Ass
         sprintf(requestBuffer,GETRequest_Online,AssistNowServer2,AssistNowToken,cachePos);
     }
 
-    String payload = HTTPGet(ubloxTS,requestBuffer,"INVALID");
-    if (payload != "INVALID" && payload.length() > 0){   
+    String payload = "";
+    if (HTTPGet(ubloxTS,requestBuffer,payload) != 200 || payload.length() == 0) return;   
 #ifdef ROBUST_ASSISTNOW
-        myGNSS.setAckAiding(1);
-        myGNSS.pushAssistNowData(payload,payload.length(),SFE_UBLOX_MGA_ASSIST_ACK_ENQUIRE,100);
+    myGNSS.setAckAiding(1);
+    myGNSS.pushAssistNowData(payload,payload.length(),SFE_UBLOX_MGA_ASSIST_ACK_ENQUIRE,100);
 #else
-        myGNSS.pushAssistNowData(payload,payload.length());
+    myGNSS.pushAssistNowData(payload,payload.length());
 #endif
-    }
     return;
 }
 
@@ -112,16 +111,16 @@ void requestOfflineAssistNow(SFE_UBLOX_GNSS &myGNSS, HttpClient *ubloxTS, const 
         sprintf(requestBuffer,GETRequest_Offline,AssistNowServer2,AssistNowToken);
     }
 
-    String payload = HTTPGet(ubloxTS,requestBuffer,"INVALID");
-    if (payload != "INVALID" && payload.length() > 0){
-        int year = 0, month = 0, day = 0, hour = 0, minute = 0, second = 0;
-        size_t todayDataIndex = 0, tomorrowDataIndex = payload.length();
-        if (!getNTPTime(hour,minute,second)) return;
-        if (!getNTPDate(day,month,year)) return;
-        todayDataIndex = myGNSS.findMGAANOForDate(payload,payload.length(),year,month,day);
-        tomorrowDataIndex = myGNSS.findMGAANOForDate(payload,payload.length(),year,month,day,1);
-        myGNSS.setUTCTimeAssistance(year,month,day,hour,minute,second);
-        myGNSS.pushAssistNowData(todayDataIndex,true,tomorrowDataIndex - todayDataIndex);
-    }
+    String payload = "";
+    if (HTTPGet(ubloxTS,requestBuffer,payload) != 200 || payload.length() == 0) return;
+
+    uint8_t month = 0, day = 0, hour = 0, minute = 0, second = 0;
+    uint16_t year = 0;
+    size_t todayDataIndex = 0, tomorrowDataIndex = payload.length();
+    if (!getNTPDateTime(hour,minute,second,day,month,year)) return;
+    todayDataIndex = myGNSS.findMGAANOForDate(payload,payload.length(),year,month,day);
+    tomorrowDataIndex = myGNSS.findMGAANOForDate(payload,payload.length(),year,month,day,1);
+    myGNSS.setUTCTimeAssistance(year,month,day,hour,minute,second);
+    myGNSS.pushAssistNowData(todayDataIndex,true,payload,tomorrowDataIndex - todayDataIndex);
     return;
 }
