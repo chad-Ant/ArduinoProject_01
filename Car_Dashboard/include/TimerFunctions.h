@@ -4,8 +4,8 @@
 #include "../config/ExternalLibConfig.h"
 #include "../config/DataDictionary.h"
 
-static constexpr unsigned long MIN_INTERVAL_MS = 1;
-static constexpr unsigned long MAX_INTERVAL_MS = ULONG_MAX;
+#define MIN_INTERVAL_MS     1UL
+#define MAX_INTERVAL_MS     ULONG_MAX
 
 /**
  * @name getInterval (Helper function)

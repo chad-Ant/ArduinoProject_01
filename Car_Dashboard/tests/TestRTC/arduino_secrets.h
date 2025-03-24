@@ -1,3 +1,3 @@
-#define SECRET_SSID "TP-Link_FB3F"
-#define SECRET_PASS "tupac1750"
+#define SECRET_SSID "401 402 403"
+#define SECRET_PASS "0938690720kien"
 

@@ -17,9 +17,13 @@ bool initializeGPS(SFE_UBLOX_GNSS &myGNSS){
 #endif
             if (myGNSS.getDynamicModel() != DYN_MODEL_AUTOMOTIVE)
                 myGNSS.setDynamicModel(DYN_MODEL_AUTOMOTIVE);
-
+            myGNSS.setNavigationFrequency(GPS_REFRESH_RATE);
             initializationSuccess = true;
-            while(!isTimeout(1000,startTime));
+
+            while(!isTimeout(1000,startTime)){
+                delay(500);
+            }
+
             startTime = millis();
             break;
         }
@@ -31,7 +35,11 @@ bool initializeGPS(SFE_UBLOX_GNSS &myGNSS){
         else{
             // myGNSS.factoryReset();
         }
-        while(!isTimeout(1000,startTime));
+
+        while(!isTimeout(1000,startTime)){
+            delay(500);
+        }
+        
     }
 
     return initializationSuccess;
@@ -80,47 +88,42 @@ GPSSignalStrength evaluateSignal(SFE_UBLOX_GNSS &myGNSS){
     }
 }
 
-void requestOnlineAssistNow(SFE_UBLOX_GNSS &myGNSS,HttpClient *ubloxTS,const AssistNowServer server){
+int requestOnlineAssistNow(SFE_UBLOX_GNSS &myGNSS,HttpClient *ubloxTS){
     /*!requests AssistNow(TM) online mode*/
-    char requestBuffer[160] = "";
-    if (server == ONLINE1){
-        sprintf(requestBuffer,GETRequest_Online,AssistNowServer1,AssistNowToken,cachePos);
-    } 
-    else{
-        sprintf(requestBuffer,GETRequest_Online,AssistNowServer2,AssistNowToken,cachePos);
-    }
-
+    char requestBuffer[256] = "";
+    sprintf(requestBuffer,GETRequest_Online,AssistNowToken,cachePos);
     String payload = "";
-    if (HTTPGet(ubloxTS,requestBuffer,payload) != 200 || payload.length() == 0) return;   
+    int responseCode = HTTPGet(ubloxTS,requestBuffer,payload);
+    if (responseCode != 200 || payload.length() == 0) return responseCode; 
 #ifdef ROBUST_ASSISTNOW
     myGNSS.setAckAiding(1);
     myGNSS.pushAssistNowData(payload,payload.length(),SFE_UBLOX_MGA_ASSIST_ACK_ENQUIRE,100);
 #else
     myGNSS.pushAssistNowData(payload,payload.length());
 #endif
-    return;
+    return responseCode;
 }
 
-void requestOfflineAssistNow(SFE_UBLOX_GNSS &myGNSS, HttpClient *ubloxTS, const AssistNowServer server){
+//MKR mControllers don't have enough memory to store AssistNow Offline data
+//This function is not used in the current implementation
+//If a different HTTP library can split the response into smaller chunks, 
+//with some modifications, this function can be used
+int requestOfflineAssistNow(SFE_UBLOX_GNSS &myGNSS, HttpClient *ubloxTS){
     /*!requests AssistNow(TM) offline mode*/
-    char requestBuffer[160] = "";
-    if (server == ONLINE1){
-        sprintf(requestBuffer,GETRequest_Offline,AssistNowServer1,AssistNowToken);
-    } 
-    else{
-        sprintf(requestBuffer,GETRequest_Offline,AssistNowServer2,AssistNowToken);
-    }
-
+    char requestBuffer[256] = "";
+    sprintf(requestBuffer,GETRequest_Offline,AssistNowToken);
     String payload = "";
-    if (HTTPGet(ubloxTS,requestBuffer,payload) != 200 || payload.length() == 0) return;
+    int responseCode = HTTPGet(ubloxTS,requestBuffer,payload);
+    if (responseCode != 200 || payload.length() == 0) return responseCode;
 
     uint8_t month = 0, day = 0, hour = 0, minute = 0, second = 0;
     uint16_t year = 0;
     size_t todayDataIndex = 0, tomorrowDataIndex = payload.length();
-    if (!getNTPDateTime(hour,minute,second,day,month,year)) return;
+    if (!getNTPDateTime(hour,minute,second,day,month,year)) return -1;
+    Serial.println(year);
     todayDataIndex = myGNSS.findMGAANOForDate(payload,payload.length(),year,month,day);
     tomorrowDataIndex = myGNSS.findMGAANOForDate(payload,payload.length(),year,month,day,1);
     myGNSS.setUTCTimeAssistance(year,month,day,hour,minute,second);
     myGNSS.pushAssistNowData(todayDataIndex,true,payload,tomorrowDataIndex - todayDataIndex);
-    return;
+    return responseCode;
 }

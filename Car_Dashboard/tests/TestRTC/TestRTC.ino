@@ -68,16 +68,19 @@ void loop() {
   // check the network connection once every 10 seconds:
   delay(10000);
   printCurrentNet();
-  /*
+  
   time_t t = WiFi.getTime();
 
   int yearNum = year(t);
   int monthNum = month(t);
   int dayNum = day(t);
+  int hourNum = hour(t);
+  int minNum = minute(t);
+  int secNum = second(t);
   char buffer[32] = "";
-  sprintf(buffer,"%d/%d/%d",yearNum,monthNum,dayNum);
-  Serial.println(buffer); */
-    // Print date...
+  sprintf(buffer,"%d/%d/%d %d:%d:%d",yearNum,monthNum,dayNum,hourNum,minNum,secNum);
+  Serial.println(buffer); 
+  /* Print date...
   Serial.print(rtc.getDay());
   Serial.print("/");
   Serial.print(rtc.getMonth());
@@ -91,6 +94,7 @@ void loop() {
   Serial.print(rtc.getMinutes());
   Serial.print(":");
   Serial.println(rtc.getSeconds());
+  */
 }
 
 void printWiFiData() {

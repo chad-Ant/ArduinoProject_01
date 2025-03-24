@@ -61,6 +61,7 @@ bool getSupportedPIDs(OBD2Config &config,long timeoutInterval){
             if (CAN.read() < 6) continue;
             if (CAN.read() != 0x41) continue;
             if (CAN.read() != tempPID) continue;
+            delay(50);
             //wait for response
         }
 

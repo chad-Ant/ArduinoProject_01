@@ -7,8 +7,14 @@ bool initializeWifi(){
     unsigned long startTime = millis();
 
     WiFi.begin(WIFI_SSID,WIFI_PASS);
-    while (!isTimeout(WIFI_TIMEOUT_MSEC, startTime) || WiFi.status() != WL_CONNECTED);
-    if (WiFi.status() == WL_CONNECTED) return true;
+    for (int i = 0; i <= WIFI_MAX_RETRY; i++){
+
+        while (!isTimeout(WIFI_TIMEOUT_MSEC, startTime) || WiFi.status() != WL_CONNECTED){
+            delay(500);
+        }
+        
+        if (WiFi.status() == WL_CONNECTED) return true;
+    }
     return false;
 }
 

@@ -190,7 +190,11 @@ bool initializeSegmentLED(Adafruit_AlphaNum4 &alpha4){
     alpha4.writeDisplay();
 
     unsigned long startTimeLED = millis();
-    while (!isTimeout(500,startTimeLED)); //wait for 500ms
+
+    while (!isTimeout(500,startTimeLED)){
+        delay(100);
+    }; //wait for 500ms
+    
     alpha4.clear();
     alpha4.writeDisplay();
 
