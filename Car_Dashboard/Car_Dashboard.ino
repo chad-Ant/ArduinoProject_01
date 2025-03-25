@@ -26,7 +26,6 @@ void setup()
 
   //Debug setup
   Serial.begin(9600);
-  while (!Serial); //Wait for user to open terminal
 
   if(isgpsClientNull) Serial.println("gpsClient is null!!!");
 
@@ -58,7 +57,7 @@ void loop()
   Serial.print("lat: ");
   Serial.print(lat);
   Serial.print(", lon: ");
-  Serial.print(lon);
+  Serial.println(lon);
   uint8_t SIV = myGNSS.getSIV();
   Serial.println(SIV);
   Serial.println("-------------");

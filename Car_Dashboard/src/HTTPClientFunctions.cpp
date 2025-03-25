@@ -31,7 +31,7 @@ HttpClient *initializeHTTPSInstance(WiFiClient &wifiClientInstance, const char *
 }
 
 long HTTPGet(HttpClient *client,const String request, String &payload){
-    if (!client) return -1;
+    if (!client || !isWifiConnected()) return -1;
     client->get(request);
     if (!client->connected()) return -1;    
     int responseCode = client->responseStatusCode();
@@ -43,7 +43,7 @@ long HTTPGet(HttpClient *client,const String request, String &payload){
 }
 
 long HTTPPost(HttpClient *client, const String request, const String contentType, const String body, String &payload){
-    if (!client) return -1;
+    if (!client || !isWifiConnected()) return -1;
     client->post(request,contentType,body);
     if (!client->connected()) return -1;
     int responseCode = client->responseStatusCode();

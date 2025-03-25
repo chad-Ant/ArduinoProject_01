@@ -4,8 +4,8 @@
 #include "../config/ExternalLibConfig.h"
 #include "../config/DataDictionary.h"
 
-#define WIFI_MAX_RETRY 5U
-#define WIFI_TIMEOUT_MSEC 20000UL
+#define WIFI_MAX_RETRY 3U
+#define WIFI_WAIT_MSEC 5000UL
 
 bool initializeWifi();
 bool configStaticIP(const IPAddress ip, const IPAddress dns);

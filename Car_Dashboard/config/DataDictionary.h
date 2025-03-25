@@ -9,8 +9,14 @@
 #define SERIAL_BAUDRATE                             115200U
 #define STATUS_INDICATOR                            LED_BUILTIN
 
-#define WIFI_SSID                                   "BTIA_OIL1HC"
-#define WIFI_PASS                                   "j7px0IYhz0PH"
+#define WIFI_SSID                                   "401 402 403"
+#define WIFI_PASS                                   "0938690720kien"
+#define WIFI_SSID_BACKUP_1                          "BTIA_OIL1HC"
+#define WIFI_PASS_BACKUP_1                          "j7px0IYhz0PH"
+#define WIFI_SSID_BACKUP_2                          "TP-Link_FB3F"
+#define WIFI_PASS_BACKUP_2                          "tupac1750"
+#define WIFI_SSID_BACKUP_3                          "TP-Link_2890"
+#define WIFI_PASS_BACKUP_3                          "52000393"
 #define URL_BUFFER_SIZE                             256
 
 #define GPS_REFRESH_RATE                            1U

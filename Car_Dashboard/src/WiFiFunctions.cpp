@@ -4,15 +4,11 @@
 bool initializeWifi(){
     if (WiFi.status() == WL_NO_SHIELD) return false;
 
-    unsigned long startTime = millis();
-
-    WiFi.begin(WIFI_SSID,WIFI_PASS);
-    for (int i = 0; i <= WIFI_MAX_RETRY; i++){
-
-        while (!isTimeout(WIFI_TIMEOUT_MSEC, startTime) || WiFi.status() != WL_CONNECTED){
-            delay(500);
-        }
-        
+    unsigned long startTime = 0;
+    for (int i = 0; i < WIFI_MAX_RETRY; i++){
+        WiFi.begin(WIFI_SSID,WIFI_PASS);
+        startTime = millis();
+        while (!isTimeout(WIFI_WAIT_MSEC,startTime));
         if (WiFi.status() == WL_CONNECTED) return true;
     }
     return false;
