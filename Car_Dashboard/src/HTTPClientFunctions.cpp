@@ -12,6 +12,7 @@ HttpClient *initializeHTTPInstance(WiFiClient &wifiClientInstance, const char *U
     HttpClient *http = new HttpClient(wifiClientInstance, URL, HTTPPort);
     if (!http) return NULL;
 
+    http->setHttpResponseTimeout(HTTPTimeout);
     return http;
 }
 
@@ -23,33 +24,34 @@ HttpClient *initializeHTTPSInstance(WiFiClient &wifiClientInstance, const char *
         wifiClientInstance.flush();
     }
     HttpClient *https = new HttpClient(wifiClientInstance, URL, HTTPSPort);
+    if (!https) return NULL;
+
+    https->setHttpResponseTimeout(HTTPTimeout);
     return https;
 }
 
-int HTTPGet(HttpClient *client,const String request, String &payload){
+long HTTPGet(HttpClient *client,const String request, String &payload){
     if (!client) return -1;
-
-    if (!client->connected()){
-        unsigned long timeout = millis();
-        while (!(client->connected() || isTimeout(HTTPTimeout,timeout))){
-            client->get(request);
-            delay(100);
-        }
-    }
+    client->get(request);
     if (!client->connected()) return -1;    
     int responseCode = client->responseStatusCode();
+    if (responseCode >= 400) return -1;
+    if (responseCode < 0) return (long)responseCode;
+
     payload = client->responseBody();
-    return responseCode;
+    return client->contentLength();
 }
 
-int HTTPPost(HttpClient *client, const String request, const String contentType, const String body, String &payload){
-    if (!client || !client->connected()) return -1;
-
+long HTTPPost(HttpClient *client, const String request, const String contentType, const String body, String &payload){
+    if (!client) return -1;
     client->post(request,contentType,body);
+    if (!client->connected()) return -1;
     int responseCode = client->responseStatusCode();
+    if (responseCode >= 400) return -1;
+    if (responseCode < 0) return (long)responseCode;
+
     payload = client->responseBody();
-    Serial.println(payload);
-    return responseCode;
+    return client->contentLength();
 }
 
 void closeHTTPInstance(HttpClient *client){

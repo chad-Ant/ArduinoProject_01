@@ -9,11 +9,11 @@
 #define SERIAL_BAUDRATE                             115200U
 #define STATUS_INDICATOR                            LED_BUILTIN
 
-#define WIFI_SSID                                   "401 402 403"
-#define WIFI_PASS                                   "0938690720kien"
+#define WIFI_SSID                                   "BTIA_OIL1HC"
+#define WIFI_PASS                                   "j7px0IYhz0PH"
 #define URL_BUFFER_SIZE                             256
 
-#define GPS_REFRESH_RATE                            2U
+#define GPS_REFRESH_RATE                            1U
 #define GPSBaudrate_Default                         9600U
 #define GPSBaudrate_Custom                          115200UL
 #define AssistNowToken                              "x-xF25aCRFyCVqidX0-3Pw" //add token before compiling 

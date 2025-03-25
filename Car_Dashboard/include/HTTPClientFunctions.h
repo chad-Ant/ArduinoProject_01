@@ -9,8 +9,8 @@
 #define HTTPTimeout 20000UL
 HttpClient *initializeHTTPInstance(WiFiClient &wifiClientInstance, const char *URL, bool overrideWifiInstance = false);
 HttpClient *initializeHTTPSInstance(WiFiClient &wifiClientInstance, const char *URL, bool overrideWifiInstance = false);
-int HTTPGet(HttpClient *client,const String request, String &payload);
-int HTTPPost(HttpClient *client, const String request, const String contentType, const String body, String &payload);
+long HTTPGet(HttpClient *client,const String request, String &payload);
+long HTTPPost(HttpClient *client, const String request, const String contentType, const String body, String &payload);
 void closeHTTPInstance(HttpClient *client);
 
 #endif

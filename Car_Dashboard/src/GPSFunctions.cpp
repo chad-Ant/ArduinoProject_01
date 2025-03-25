@@ -88,28 +88,30 @@ GPSSignalStrength evaluateSignal(SFE_UBLOX_GNSS &myGNSS){
     }
 }
 
-int requestOnlineAssistNow(SFE_UBLOX_GNSS &myGNSS,HttpClient *ubloxTS){
+bool requestOnlineAssistNow(SFE_UBLOX_GNSS &myGNSS,HttpClient *ubloxTS){
     /*!requests AssistNow(TM) online mode*/
     char requestBuffer[256] = "";
     sprintf(requestBuffer,GETRequest_Online,AssistNowToken,cachePos);
     String payload = "";
-    int responseCode = HTTPGet(ubloxTS,requestBuffer,payload);
-    if (responseCode != 200 || payload.length() == 0) return responseCode; 
+    long payloadLength = HTTPGet(ubloxTS,requestBuffer,payload);
+    if (payloadLength <= 0) return false; 
 #ifdef ROBUST_ASSISTNOW
     myGNSS.setAckAiding(1);
-    myGNSS.pushAssistNowData(payload,payload.length(),SFE_UBLOX_MGA_ASSIST_ACK_ENQUIRE,100);
+    if (myGNSS.pushAssistNowData(payload,payload.length(),SFE_UBLOX_MGA_ASSIST_ACK_ENQUIRE,100) > 0) return true;
 #else
-    myGNSS.pushAssistNowData(payload,payload.length());
+    if (myGNSS.pushAssistNowData(payload,payloadLength) > 0) return true;
 #endif
-    return responseCode;
+    return false;
 }
 
 //MKR mControllers don't have enough memory to store AssistNow Offline data
 //This function is not used in the current implementation
 //If a different HTTP library can split the response into smaller chunks, 
 //with some modifications, this function can be used
+
+/*
 int requestOfflineAssistNow(SFE_UBLOX_GNSS &myGNSS, HttpClient *ubloxTS){
-    /*!requests AssistNow(TM) offline mode*/
+    //!requests AssistNow(TM) offline mode
     char requestBuffer[256] = "";
     sprintf(requestBuffer,GETRequest_Offline,AssistNowToken);
     String payload = "";
@@ -127,3 +129,4 @@ int requestOfflineAssistNow(SFE_UBLOX_GNSS &myGNSS, HttpClient *ubloxTS){
     myGNSS.pushAssistNowData(todayDataIndex,true,payload,tomorrowDataIndex - todayDataIndex);
     return responseCode;
 }
+*/
