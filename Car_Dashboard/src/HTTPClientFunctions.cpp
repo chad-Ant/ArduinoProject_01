@@ -30,28 +30,32 @@ HttpClient *initializeHTTPSInstance(WiFiClient &wifiClientInstance, const char *
     return https;
 }
 
-long HTTPGet(HttpClient *client,const String request, String &payload){
-    if (!client || !isWifiConnected()) return -1;
+HTTPReturnStatus HTTPGet(HttpClient *client,const String request, String &payload){
+    if (!client) return HTTP_HTTP_CLIENT_NULL;
+    if (!isWifiConnected()) return HTTP_WIFI_DISCONNECTED;
     client->get(request);
-    if (!client->connected()) return -1;    
+    if (!client->connected()) return HTTP_SERVER_NOT_CONNECTED;    
     int responseCode = client->responseStatusCode();
-    if (responseCode >= 400) return -1;
-    if (responseCode < 0) return (long)responseCode;
+    if (responseCode >= 400 && responseCode < 500) return HTTP_CLIENT_ERROR;
+    if (responseCode >= 500) return HTTP_SERVER_ERROR;
+    if (responseCode < 0) return HTTP_INTERNAL_LIB_ERROR;
 
     payload = client->responseBody();
-    return client->contentLength();
+    return HTTP_COMMAND_SUCCESS;
 }
 
-long HTTPPost(HttpClient *client, const String request, const String contentType, const String body, String &payload){
-    if (!client || !isWifiConnected()) return -1;
+HTTPReturnStatus HTTPPost(HttpClient *client, const String request, const String contentType, const String body, String &payload){
+    if (!client) return HTTP_HTTP_CLIENT_NULL;
+    if (!isWifiConnected()) return HTTP_WIFI_DISCONNECTED;
     client->post(request,contentType,body);
-    if (!client->connected()) return -1;
+    if (!client->connected()) return HTTP_SERVER_NOT_CONNECTED;
     int responseCode = client->responseStatusCode();
-    if (responseCode >= 400) return -1;
-    if (responseCode < 0) return (long)responseCode;
+    if (responseCode >= 400 && responseCode < 500) return HTTP_CLIENT_ERROR;
+    if (responseCode >= 500) return HTTP_SERVER_ERROR;
+    if (responseCode < 0) return HTTP_INTERNAL_LIB_ERROR;
 
     payload = client->responseBody();
-    return client->contentLength();
+    return HTTP_COMMAND_SUCCESS;
 }
 
 void closeHTTPInstance(HttpClient *client){

@@ -3,8 +3,7 @@
 #include "../include/TimerFunctions.h"
 #define GPS_INIT_MAX_RETRY 3
 
-bool initializeGPS(SFE_UBLOX_GNSS &myGNSS){
-    bool initializationSuccess = false;
+GPSReturnStatus initializeGPS(SFE_UBLOX_GNSS &myGNSS){
     unsigned long startTime = millis();
     pinMode(GPS_PIN, OUTPUT);
     digitalWrite(GPS_PIN, HIGH);
@@ -12,20 +11,21 @@ bool initializeGPS(SFE_UBLOX_GNSS &myGNSS){
     for (int i = 0; i < GPS_INIT_MAX_RETRY; i++){
         Serial1.begin(GPSBaudrate_Custom);
         if (myGNSS.begin(Serial1)){
-#ifndef ENABLE_NMEA
+#ifndef GPS_ENABLE_NMEA
             myGNSS.setUART1Output(COM_TYPE_UBX);
 #endif
             if (myGNSS.getDynamicModel() != DYN_MODEL_AUTOMOTIVE)
                 myGNSS.setDynamicModel(DYN_MODEL_AUTOMOTIVE);
             myGNSS.setNavigationFrequency(GPS_REFRESH_RATE);
-            initializationSuccess = true;
+            myGNSS.setNavigationRate(1); //one nav solution per update
+            myGNSS.setAutoPVTrate(1);
 
             while(!isTimeout(1000,startTime)){
                 delay(500);
             }
 
             startTime = millis();
-            break;
+            return GPS_SUCCESS;
         }
 
         Serial1.begin(GPSBaudrate_Default);
@@ -42,27 +42,31 @@ bool initializeGPS(SFE_UBLOX_GNSS &myGNSS){
         
     }
 
-    return initializationSuccess;
+    return GPS_FAILED;
 }
 
-bool intializeGPS_I2C(SFE_UBLOX_GNSS &myGNSS){
+GPSReturnStatus intializeGPS_I2C(SFE_UBLOX_GNSS &myGNSS){
 
 }
 
-void getLatLongAlt(SFE_UBLOX_GNSS &myGNSS, float &latitude, float &longitude, float &altitude){
+GPSReturnStatus getLatLongAlt(SFE_UBLOX_GNSS &myGNSS, float &latitude, float &longitude, float &altitude){
+    if (!myGNSS.getPVT()) return DATA_STALE;
     latitude = (float)(myGNSS.getLatitude()) * 0.0000001;
     longitude = (float)(myGNSS.getLongitude()) * 0.0000001;
     altitude = (float)(myGNSS.getAltitudeMSL()) * 0.001;
+    return DATA_FRESH;
 }
 
-void getSpeedHeading(SFE_UBLOX_GNSS &myGNSS, float &speed, float &heading){
+GPSReturnStatus getSpeedHeading(SFE_UBLOX_GNSS &myGNSS, float &speed, float &heading){
+    if (!myGNSS.getPVT()) return DATA_STALE;
     speed = (float)(myGNSS.getGroundSpeed()) * 0.0036; // km/h
     heading = (float)(myGNSS.getHeading()) * 0.00001;  // deg
+    return DATA_FRESH;
 }
 
-bool setAcquisitionFrequency(SFE_UBLOX_GNSS &myGNSS, uint8_t rateHz){
+GPSReturnStatus setAcquisitionFrequency(SFE_UBLOX_GNSS &myGNSS, uint8_t rateHz){
     rateHz = rateHz >= 1 ? (rateHz < 10 ? rateHz : 10) : 1;
-    return myGNSS.setNavigationFrequency(rateHz);
+    return myGNSS.setNavigationFrequency(rateHz) ? SET_GPS_RATE_SUCCESS : SET_GPS_RATE_FAILED;
 }
 
 GPSSignalStrength evaluateSignal(SFE_UBLOX_GNSS &myGNSS){
@@ -88,20 +92,19 @@ GPSSignalStrength evaluateSignal(SFE_UBLOX_GNSS &myGNSS){
     }
 }
 
-bool requestOnlineAssistNow(SFE_UBLOX_GNSS &myGNSS,HttpClient *ubloxTS){
+GPSReturnStatus requestOnlineAssistNow(SFE_UBLOX_GNSS &myGNSS,HttpClient *ubloxTS){
     /*!requests AssistNow(TM) online mode*/
     char requestBuffer[256] = "";
     sprintf(requestBuffer,GETRequest_Online,AssistNowToken,cachePos);
     String payload = "";
-    long payloadLength = HTTPGet(ubloxTS,requestBuffer,payload);
-    if (payloadLength <= 0) return false; 
+    if (HTTPGet(ubloxTS,requestBuffer,payload) != HTTP_COMMAND_SUCCESS) return ASSISTNOW_REQUEST_FAILED; 
 #ifdef ROBUST_ASSISTNOW
     myGNSS.setAckAiding(1);
-    if (myGNSS.pushAssistNowData(payload,payload.length(),SFE_UBLOX_MGA_ASSIST_ACK_ENQUIRE,100) > 0) return true;
+    if (myGNSS.pushAssistNowData(payload,payload.length(),SFE_UBLOX_MGA_ASSIST_ACK_ENQUIRE,100) > 0) return ASSISTNOW_SUCCESS;
 #else
-    if (myGNSS.pushAssistNowData(payload,payloadLength) > 0) return true;
+    if (myGNSS.pushAssistNowData(payload,payload.length()) > 0) return ASSISTNOW_SUCCESS;
 #endif
-    return false;
+    return ASSISTNOW_PUSH_FAILED;
 }
 
 //MKR mControllers don't have enough memory to store AssistNow Offline data
