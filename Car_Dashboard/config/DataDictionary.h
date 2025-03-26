@@ -11,12 +11,12 @@
 
 #define WIFI_SSID                                   "401 402 403"
 #define WIFI_PASS                                   "0938690720kien"
-#define WIFI_SSID_BACKUP_1                          "BTIA_OIL1HC"
-#define WIFI_PASS_BACKUP_1                          "j7px0IYhz0PH"
-#define WIFI_SSID_BACKUP_2                          "TP-Link_FB3F"
-#define WIFI_PASS_BACKUP_2                          "tupac1750"
-#define WIFI_SSID_BACKUP_3                          "TP-Link_2890"
-#define WIFI_PASS_BACKUP_3                          "52000393"
+#define WIFI_SSID_BACKUP_1                          "xxx"
+#define WIFI_PASS_BACKUP_1                          "xxx"
+#define WIFI_SSID_BACKUP_2                          "yyy"
+#define WIFI_PASS_BACKUP_2                          "yyy"
+#define WIFI_SSID_BACKUP_3                          "zzz"
+#define WIFI_PASS_BACKUP_3                          "zzz"
 #define URL_BUFFER_SIZE                             256
 
 #define GPS_REFRESH_RATE                            1U
@@ -25,10 +25,10 @@
 #define AssistNowToken                              "x-xF25aCRFyCVqidX0-3Pw" //add token before compiling 
 #define AssistNowServer1                            "online-live1.services.u-blox.com"
 #define AssistNowServer2                            "online-live2.services.u-blox.com"
-#define AssistNowServer1_OFFLINE                    "offline-live1.services.u-blox.com"
-#define AssistNowServer2_OFFLINE                    "offline-live2.services.u-blox.com"
+//#define AssistNowServer1_OFFLINE                    "offline-live1.services.u-blox.com"
+//#define AssistNowServer2_OFFLINE                    "offline-live2.services.u-blox.com"
 #define GETRequest_Online                           "/GetOnlineData.ashx?token=%s;gnss=gps,glo,qzss,gal;datatype=eph,alm,aux,pos;%s"
-#define GETRequest_Offline                          "/GetOfflineData.ashx?token=%s;gnss=gps,glo,gal;period=1;resolution=1"
+//#define GETRequest_Offline                          "/GetOfflineData.ashx?token=%s;gnss=gps,glo,gal;period=1;resolution=1"
 ///GetOnlineData.ashx?token=;gnss=gps,glo,qzss,gal;datatype=eph,alm,aux,pos;lat=10.815329;lon=106.657337;alt=10.000000;pacc=10000.000000
 #define USE_DEFAULT_LOCATION 1
 #ifdef USE_HOCHIMINH    //10.81532915851147, 106.6573371901137

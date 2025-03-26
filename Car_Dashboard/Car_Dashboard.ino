@@ -64,5 +64,4 @@ void loop()
   
   LED_on ^= 1;
   digitalWrite(STATUS_INDICATOR,LED_on);
-  lastLEDBlink = millis();
 }
