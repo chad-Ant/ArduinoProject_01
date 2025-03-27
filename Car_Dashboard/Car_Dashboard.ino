@@ -15,8 +15,10 @@ unsigned long lastGPSUpdate = 0, lastLEDBlink = 0, lastShowTime = 0;
 float lat, lon, alt;
 float altFiltered;
 int LED_on = 1;
-uint8_t tHr = 0, tMin = 0, tSec = 0;
+uint8_t tHr = 0, tMin = 0;
+uint16_t tSec = 0;
 
+IPAddress localIP;
 SimpleMovingAverage altitudeFilter(SIZE_8);
 
 void setup()
@@ -32,8 +34,16 @@ void setup()
   else Serial.println("Wifi not connected.");
   
   //RTC setup
+  initializeRTC(rtc);
   if (setRTCDateTime(rtc)) Serial.println("RTC set!");
   else Serial.println("RTC not set up.");
+  getRTCDate(rtc, tHr, tMin, tSec);
+  Serial.print(tHr);
+  Serial.print(":");
+  Serial.print(tMin);
+  Serial.print(":");
+  Serial.println(tSec);
+
 
   //GPS Shield setup
   if (initializeGPS(myGNSS) == GPSReturnStatus::GPS_SUCCESS) Serial.println("GPS module started.");

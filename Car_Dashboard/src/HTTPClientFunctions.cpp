@@ -33,6 +33,7 @@ HttpClient *initializeHTTPSInstance(WiFiClient &wifiClientInstance, const char *
 HTTPReturnStatus HTTPGet(HttpClient *client,const String request, String &payload){
     if (!client) return HTTP_HTTP_CLIENT_NULL;
     if (!isWifiConnected()) return HTTP_WIFI_DISCONNECTED;
+    
     client->get(request);
     if (!client->connected()) return HTTP_SERVER_NOT_CONNECTED;    
     int responseCode = client->responseStatusCode();

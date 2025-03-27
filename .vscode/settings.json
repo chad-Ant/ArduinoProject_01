@@ -9,6 +9,9 @@
         "type_traits": "cpp",
         "utility": "cpp",
         "cstdint": "cpp",
-        "xmemory": "cpp"
+        "xmemory": "cpp",
+        "ctime": "cpp",
+        "initializer_list": "cpp",
+        "vector": "cpp"
     }
 }

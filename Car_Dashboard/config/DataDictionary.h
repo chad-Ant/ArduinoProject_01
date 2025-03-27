@@ -9,10 +9,10 @@
 #define SERIAL_BAUDRATE                             115200U
 #define STATUS_INDICATOR                            LED_BUILTIN
 
-#define WIFI_SSID                                   "TP-Link_2890"
-#define WIFI_PASS                                   "52000393"
-#define WIFI_SSID_BACKUP_1                          "xxx"
-#define WIFI_PASS_BACKUP_1                          "xxx"
+#define WIFI_SSID                                   "Pixel_5101"
+#define WIFI_PASS                                   "AndroidPixel6"
+#define WIFI_SSID_BACKUP_1                          "TP-Link_2890"
+#define WIFI_PASS_BACKUP_1                          "52000393"
 #define WIFI_SSID_BACKUP_2                          "yyy"
 #define WIFI_PASS_BACKUP_2                          "yyy"
 #define WIFI_SSID_BACKUP_3                          "zzz"

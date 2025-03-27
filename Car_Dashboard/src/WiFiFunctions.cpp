@@ -30,7 +30,7 @@ bool isWifiConnected(){
 
 WiFiReturnStatus getUnixTime(unsigned long &unixTime){
     if (WiFi.status() != WL_CONNECTED) return WIFI_GET_TIME_FAILED_NO_CONNECTION;
-    unixTime = WiFi.getTime();
+    unixTime = WiFi.getTime(); //static IP will cause this to fail, suggest using dynamic IP
     if (unixTime != 0) return WIFI_GET_TIME_SUCCESS;
     else return WIFI_GET_TIME_FAILED_ZERO_TIME;
 }
