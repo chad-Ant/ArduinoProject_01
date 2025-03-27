@@ -40,14 +40,7 @@ inline unsigned long getInterval(unsigned long lastTime, unsigned long currentTi
  * @note example usage: startTime = millis(); while (!timeout(1000,startTime)) {do something}
  */
 inline bool isTimeout(const unsigned long timer, unsigned long &startTime){
-    if (timer < MIN_INTERVAL_MS){
-        return true;
-    }
-    unsigned long currentTime = millis();
-    if (getInterval(startTime,currentTime) >= timer){
-        return true;
-    }
-    return false;
+    return getInterval(startTime,millis()) >= timer;
 }
 
 /**
