@@ -50,23 +50,23 @@ GPSReturnStatus intializeGPS_I2C(SFE_UBLOX_GNSS &myGNSS){
 }
 
 GPSReturnStatus getLatLongAlt(SFE_UBLOX_GNSS &myGNSS, float &latitude, float &longitude, float &altitude){
-    if (!myGNSS.getPVT()) return DATA_STALE;
+    if (!myGNSS.getPVT()) return GPS_DATA_STALE;
     latitude = (float)(myGNSS.getLatitude()) * 0.0000001;
     longitude = (float)(myGNSS.getLongitude()) * 0.0000001;
     altitude = (float)(myGNSS.getAltitudeMSL()) * 0.001;
-    return DATA_FRESH;
+    return GPS_DATA_FRESH;
 }
 
 GPSReturnStatus getSpeedHeading(SFE_UBLOX_GNSS &myGNSS, float &speed, float &heading){
-    if (!myGNSS.getPVT()) return DATA_STALE;
+    if (!myGNSS.getPVT()) return GPS_DATA_STALE;
     speed = (float)(myGNSS.getGroundSpeed()) * 0.0036; // km/h
     heading = (float)(myGNSS.getHeading()) * 0.00001;  // deg
-    return DATA_FRESH;
+    return GPS_DATA_FRESH;
 }
 
 GPSReturnStatus setAcquisitionFrequency(SFE_UBLOX_GNSS &myGNSS, uint8_t rateHz){
     rateHz = rateHz >= 1 ? (rateHz < 10 ? rateHz : 10) : 1;
-    return myGNSS.setNavigationFrequency(rateHz) ? SET_GPS_RATE_SUCCESS : SET_GPS_RATE_FAILED;
+    return myGNSS.setNavigationFrequency(rateHz) ? GPS_SET_RATE_SUCCESS : GPS_SET_RATE_FAILED;
 }
 
 GPSSignalStrength evaluateSignal(SFE_UBLOX_GNSS &myGNSS){
@@ -97,14 +97,14 @@ GPSReturnStatus requestOnlineAssistNow(SFE_UBLOX_GNSS &myGNSS,HttpClient *ubloxT
     char requestBuffer[256] = "";
     sprintf(requestBuffer,GETRequest_Online,AssistNowToken,cachePos);
     String payload = "";
-    if (HTTPGet(ubloxTS,requestBuffer,payload) != HTTP_COMMAND_SUCCESS) return ASSISTNOW_REQUEST_FAILED; 
+    if (HTTPGet(ubloxTS,requestBuffer,payload) != HTTP_COMMAND_SUCCESS) return GPS_ASSISTNOW_REQUEST_FAILED; 
 #ifdef ROBUST_ASSISTNOW
     myGNSS.setAckAiding(1);
-    if (myGNSS.pushAssistNowData(payload,payload.length(),SFE_UBLOX_MGA_ASSIST_ACK_ENQUIRE,100) > 0) return ASSISTNOW_SUCCESS;
+    if (myGNSS.pushAssistNowData(payload,payload.length(),SFE_UBLOX_MGA_ASSIST_ACK_ENQUIRE,100) > 0) return GPS_ASSISTNOW_SUCCESS;
 #else
-    if (myGNSS.pushAssistNowData(payload,payload.length()) > 0) return ASSISTNOW_SUCCESS;
+    if (myGNSS.pushAssistNowData(payload,payload.length()) > 0) return GPS_ASSISTNOW_SUCCESS;
 #endif
-    return ASSISTNOW_PUSH_FAILED;
+    return GPS_ASSISTNOW_PUSH_FAILED;
 }
 
 //MKR mControllers don't have enough memory to store AssistNow Offline data

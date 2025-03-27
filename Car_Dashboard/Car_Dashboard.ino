@@ -11,10 +11,11 @@ RTCZero rtc;
 
 SFE_UBLOX_GNSS myGNSS;
 
-unsigned long lastGPSUpdate, lastLEDBlink = 0;
+unsigned long lastGPSUpdate = 0, lastLEDBlink = 0, lastShowTime = 0;
 float lat, lon, alt;
 float altFiltered;
 int LED_on = 1;
+uint8_t tHr = 0, tMin = 0, tSec = 0;
 
 SimpleMovingAverage altitudeFilter(SIZE_8);
 
@@ -31,30 +32,33 @@ void setup()
   else Serial.println("Wifi not connected.");
   
   //RTC setup
-  setRTCDateTime(rtc);
+  if (setRTCDateTime(rtc)) Serial.println("RTC set!");
+  else Serial.println("RTC not set up.");
 
   //GPS Shield setup
   if (initializeGPS(myGNSS) == GPSReturnStatus::GPS_SUCCESS) Serial.println("GPS module started.");
   else Serial.println("GPS module failed");
   
-  if (requestOnlineAssistNow(myGNSS,gpsClient) == GPSReturnStatus::ASSISTNOW_SUCCESS) Serial.println("OnlineAssistNow success.");
+  if (requestOnlineAssistNow(myGNSS,gpsClient) == GPSReturnStatus::GPS_ASSISTNOW_SUCCESS) Serial.println("OnlineAssistNow success.");
   else Serial.println("OnlineAssistNow failed.");
   
 }
 
 void loop()
 { 
-  GPSReturnStatus status = getLatLongAlt(myGNSS,lat,lon,alt);
-  if (isTimeout(500,lastGPSUpdate)){
-    if (status == DATA_STALE) Serial.println("data is stale");
+  if (getLatLongAlt(myGNSS,lat,lon,alt) == GPS_DATA_FRESH){
+    Serial.print("CURRENT SIV: ");
     Serial.println(myGNSS.getSIV());
-    Serial.println("-------------");
-    lastGPSUpdate = millis();
   }
   
-  if (isTimeout(1000,lastLEDBlink)){
+  if (isTimeout(2000,lastLEDBlink)){
     LED_on ^= 1;
     digitalWrite(STATUS_INDICATOR,LED_on);
     lastLEDBlink = millis();
+  }
+
+  if (isTimeout(100,lastShowTime)){
+    Serial.print(".");
+    lastShowTime = millis();
   }
 }

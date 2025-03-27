@@ -56,12 +56,13 @@ bool getNTPDateTime(uint8_t &tHour, uint8_t &tMinute, uint8_t &tSecond, uint8_t 
 bool setRTCDateTime(RTCZero &rtc, int8_t timezone){
     if (!isWifiConnected()) return false;
     unsigned long unixTime = 0;
-    if (!getUnixTime(unixTime)) return false;
+    if (getUnixTime(unixTime) != WIFI_GET_TIME_SUCCESS) return false;
     checkTimezoneValidity(timezone);
     unixTime += timezone * 3600;
     time_t t = unixTime;
     rtc.setTime(hour(t), minute(t), second(t));
     rtc.setDate(day(t), month(t), year(t));
+    Serial.println(t);
     return true;
 }
 

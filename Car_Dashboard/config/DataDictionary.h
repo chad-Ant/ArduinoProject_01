@@ -9,8 +9,8 @@
 #define SERIAL_BAUDRATE                             115200U
 #define STATUS_INDICATOR                            LED_BUILTIN
 
-#define WIFI_SSID                                   "BTIA_OIL1HC"
-#define WIFI_PASS                                   "j7px0IYhz0PH"
+#define WIFI_SSID                                   "TP-Link_2890"
+#define WIFI_PASS                                   "52000393"
 #define WIFI_SSID_BACKUP_1                          "xxx"
 #define WIFI_PASS_BACKUP_1                          "xxx"
 #define WIFI_SSID_BACKUP_2                          "yyy"

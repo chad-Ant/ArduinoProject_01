@@ -15,13 +15,13 @@ WiFiReturnStatus initializeWifi(){
 }
 
 WiFiReturnStatus configStaticIP(const IPAddress ip, const IPAddress dns){
-    if (WiFi.status() == WL_NO_SHIELD) CFG_STATIC_IP_FAILED_NO_SHIELD;
-    if (ip == INADDR_NONE) return CFG_STATIC_IP_FAILED_EMPTY_IP;
-    if (dns == INADDR_NONE) return CFG_STATIC_IP_FAILED_EMPTY_DNS;
+    if (WiFi.status() == WL_NO_SHIELD) WIFI_CFG_STC_IP_FAILED_NO_SHIELD;
+    if (ip == INADDR_NONE) return WIFI_CFG_STC_IP_FAILED_EMPTY_IP;
+    if (dns == INADDR_NONE) return WIFI_CFG_STC_IP_FAILED_EMPTY_DNS;
 
     WiFi.config(ip, dns);
-    if (WiFi.localIP() == ip) return CFG_STATIC_IP_SUCCESS;
-    else return CFG_STATIC_IP_FAILED_IP_MISMATCH;
+    if (WiFi.localIP() == ip) return WIFI_CFG_STC_IP_SUCCESS;
+    else return WIFI_CFG_STC_IP_FAILED_IP_MISMATCH;
 }
 
 bool isWifiConnected(){
@@ -29,23 +29,23 @@ bool isWifiConnected(){
 }
 
 WiFiReturnStatus getUnixTime(unsigned long &unixTime){
-    if (WiFi.status() != WL_CONNECTED) return GET_TIME_FAILED_NO_CONNECTION;
+    if (WiFi.status() != WL_CONNECTED) return WIFI_GET_TIME_FAILED_NO_CONNECTION;
     unixTime = WiFi.getTime();
-    if (unixTime != 0) return GET_TIME_SUCCESS;
-    else return GET_TIME_FAILED_ZERO_TIME;
+    if (unixTime != 0) return WIFI_GET_TIME_SUCCESS;
+    else return WIFI_GET_TIME_FAILED_ZERO_TIME;
 }
 
 WiFiReturnStatus getLocalIP(IPAddress &localIP){
-    if (WiFi.status() != WL_CONNECTED) return GET_IP_FAILED_NO_CONNECTION;
+    if (WiFi.status() != WL_CONNECTED) return WIFI_GET_IP_FAILED_NO_CONNECTION;
     localIP = WiFi.localIP();
-    if (localIP != INADDR_NONE) return GET_IP_SUCCESS;
-    else return GET_IP_FAILED_EMPTY_IP;
+    if (localIP != INADDR_NONE) return WIFI_GET_IP_SUCCESS;
+    else return WIFI_GET_IP_FAILED_EMPTY_IP;
 }
 
 WiFiReturnStatus closeWifi(){
     WiFi.disconnect();
-    if (WiFi.status() != WL_CONNECTED) return CLOSE_SUCCESS;
-    else return CLOSE_FAILED;
+    if (WiFi.status() != WL_CONNECTED) return WIFI_CLOSE_SUCCESS;
+    else return WIFI_CLOSE_FAILED;
 
 }
 
