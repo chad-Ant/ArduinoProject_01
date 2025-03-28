@@ -1,52 +1,79 @@
+#include "../include/GlobalVariables.h"
 #include "../include/GPSFunctions.h"
 #include "../include/HTTPClientFunctions.h"
 #include "../include/TimerFunctions.h"
 #define GPS_INIT_MAX_RETRY 3
 
 GPSReturnStatus initializeGPS(SFE_UBLOX_GNSS &myGNSS){
-    unsigned long startTime = millis();
     pinMode(GPS_PIN, OUTPUT);
     digitalWrite(GPS_PIN, HIGH);
 
-    for (int i = 0; i < GPS_INIT_MAX_RETRY; i++){
-        Serial1.begin(GPSBaudrate_Custom);
-        if (myGNSS.begin(Serial1)){
+    //1st attempt with custom baud rate
+    Serial1.begin(GPS_BAUDRATE_CUSTOM);
+    if (myGNSS.begin(Serial1)){
 #ifndef GPS_ENABLE_NMEA
-            myGNSS.setUART1Output(COM_TYPE_UBX);
+        myGNSS.setUART1Output(COM_TYPE_UBX);
 #endif
-            if (myGNSS.getDynamicModel() != DYN_MODEL_AUTOMOTIVE)
-                myGNSS.setDynamicModel(DYN_MODEL_AUTOMOTIVE);
-            myGNSS.setNavigationFrequency(GPS_REFRESH_RATE);
-            myGNSS.setNavigationRate(1); //one nav solution per update
-            myGNSS.setAutoPVTrate(1);
-
-            while(!isTimeout(1000,startTime)){
-                delay(500);
-            }
-
-            startTime = millis();
-            return GPS_SUCCESS;
-        }
-
-        Serial1.begin(GPSBaudrate_Default);
-        if (myGNSS.begin(Serial1)){
-            myGNSS.setSerialRate(GPSBaudrate_Custom);
-        }
-        else{
-            // myGNSS.factoryReset();
-        }
-
-        while(!isTimeout(1000,startTime)){
-            delay(500);
-        }
-        
+        if (myGNSS.getDynamicModel() != DYN_MODEL_AUTOMOTIVE) myGNSS.setDynamicModel(DYN_MODEL_AUTOMOTIVE);
+        myGNSS.setNavigationFrequency(GPS_REFRESH_RATE);
+        myGNSS.setNavigationRate(1); //one nav solution per update
+        myGNSS.setAutoPVTrate(1);
+        return GPS_SUCCESS;
+    }
+    
+    //set baud rate to custom baud rate for high resolution positioning
+    Serial1.begin(GPS_BAUDRATE_DEFAULT);
+    if (myGNSS.begin(Serial1)){
+        myGNSS.setSerialRate(GPS_BAUDRATE_CUSTOM);
+        myGNSS.saveConfiguration();
+    }
+    //2nd attempt with custom baud rate
+    Serial1.begin(GPS_BAUDRATE_CUSTOM);
+    if (myGNSS.begin(Serial1)){
+#ifndef GPS_ENABLE_NMEA
+        myGNSS.setUART1Output(COM_TYPE_UBX);
+#endif
+        if (myGNSS.getDynamicModel() != DYN_MODEL_AUTOMOTIVE) myGNSS.setDynamicModel(DYN_MODEL_AUTOMOTIVE);
+        myGNSS.setNavigationFrequency(GPS_REFRESH_RATE);
+        myGNSS.setNavigationRate(1); //one nav solution per update
+        myGNSS.setAutoPVTrate(1);
+        return GPS_SUCCESS;
     }
 
+    //use the default options if failed to set up high res positioning
+    Serial1.begin(GPS_BAUDRATE_DEFAULT);
+    if (myGNSS.begin(Serial1)){
+        #ifndef GPS_ENABLE_NMEA
+        myGNSS.setUART1Output(COM_TYPE_UBX);
+#endif
+        if (myGNSS.getDynamicModel() != DYN_MODEL_AUTOMOTIVE) myGNSS.setDynamicModel(DYN_MODEL_AUTOMOTIVE);
+        myGNSS.setNavigationFrequency(1); //1Hz, safest option here
+        myGNSS.setNavigationRate(1); //one nav solution per update
+        myGNSS.setAutoPVTrate(1); 
+        return GPS_SUCCESS;
+    }
+
+    //give up lmao
     return GPS_FAILED;
 }
 
 GPSReturnStatus intializeGPS_I2C(SFE_UBLOX_GNSS &myGNSS){
+    if (!i2cInitialized){
+        Wire.begin();
+        i2cInitialized = true;
+    }
 
+    if (!myGNSS.begin(Wire,GPS_DEFAULT_I2C_ADDRESS) || !myGNSS.begin(Wire,GPS_BACKUP_I2C_ADDRESS)) return GPS_FAILED;
+    delay(500);
+#ifndef GPS_ENABLE_NMEA
+    myGNSS.setI2COutput(COM_TYPE_UBX);
+#endif
+    if (myGNSS.getDynamicModel() != DYN_MODEL_AUTOMOTIVE) myGNSS.setDynamicModel(DYN_MODEL_AUTOMOTIVE);
+    myGNSS.setI2CpollingWait(25);
+    myGNSS.setNavigationFrequency(GPS_REFRESH_RATE);
+    myGNSS.setNavigationRate(1); //one nav solution per update
+    myGNSS.setAutoPVTrate(1);
+    return GPS_SUCCESS;
 }
 
 GPSReturnStatus getLatLongAlt(SFE_UBLOX_GNSS &myGNSS, float &latitude, float &longitude, float &altitude){
@@ -75,7 +102,7 @@ GPSSignalStrength evaluateSignal(SFE_UBLOX_GNSS &myGNSS){
     case 0:
     case 1:
     case 2:
-        // cannot get a position with only <2 satellites anyway
+        // cannot get a position with only <=2 satellites anyway
         return NOSIGNAL;
     case 3:
         // is this possible?
@@ -95,7 +122,7 @@ GPSSignalStrength evaluateSignal(SFE_UBLOX_GNSS &myGNSS){
 GPSReturnStatus requestOnlineAssistNow(SFE_UBLOX_GNSS &myGNSS,HttpClient *ubloxTS){
     /*!requests AssistNow(TM) online mode*/
     char requestBuffer[256] = "";
-    sprintf(requestBuffer,GETRequest_Online,AssistNowToken,cachePos);
+    sprintf(requestBuffer,GPS_GET_ASSISTNOW_ONLINE,GPS_ASSISTNOW_TOKEN,GPS_DEFAULT_POSITION);
     String payload = "";
     if (HTTPGet(ubloxTS,requestBuffer,payload) != HTTP_COMMAND_SUCCESS) return GPS_ASSISTNOW_REQUEST_FAILED; 
 #ifdef ROBUST_ASSISTNOW
@@ -116,7 +143,7 @@ GPSReturnStatus requestOnlineAssistNow(SFE_UBLOX_GNSS &myGNSS,HttpClient *ubloxT
 int requestOfflineAssistNow(SFE_UBLOX_GNSS &myGNSS, HttpClient *ubloxTS){
     //!requests AssistNow(TM) offline mode
     char requestBuffer[256] = "";
-    sprintf(requestBuffer,GETRequest_Offline,AssistNowToken);
+    sprintf(requestBuffer,GETRequest_Offline,GPS_ASSISTNOW_TOKEN);
     String payload = "";
     int responseCode = HTTPGet(ubloxTS,requestBuffer,payload);
     if (responseCode != 200 || payload.length() == 0) return responseCode;

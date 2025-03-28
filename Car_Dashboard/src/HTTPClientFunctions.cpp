@@ -48,6 +48,7 @@ HTTPReturnStatus HTTPGet(HttpClient *client,const String request, String &payloa
 HTTPReturnStatus HTTPPost(HttpClient *client, const String request, const String contentType, const String body, String &payload){
     if (!client) return HTTP_HTTP_CLIENT_NULL;
     if (!isWifiConnected()) return HTTP_WIFI_DISCONNECTED;
+    
     client->post(request,contentType,body);
     if (!client->connected()) return HTTP_SERVER_NOT_CONNECTED;
     int responseCode = client->responseStatusCode();

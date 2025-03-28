@@ -4,10 +4,13 @@
 #include "include/TimerFunctions.h" //works
 #include "include/GPSFunctions.h"
 #include "include/MathFunctions.h"
+#include "include/ServoFunctions.h"
 
 WiFiClient gpsServerConnection;
-HttpClient *gpsClient = initializeHTTPInstance(gpsServerConnection, AssistNowServer1);
+HttpClient *gpsClient = initializeHTTPInstance(gpsServerConnection, GPS_ASSISTNOW_SERVER_1);
 RTCZero rtc;
+Servo servo_x;
+Servo servo_y;
 
 SFE_UBLOX_GNSS myGNSS;
 
@@ -68,7 +71,8 @@ void loop()
   }
 
   if (isTimeout(100,lastShowTime)){
-    Serial.print(".");
+    Serial.println(".");
     lastShowTime = millis();
   }
+
 }

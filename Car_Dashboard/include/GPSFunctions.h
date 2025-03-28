@@ -4,7 +4,7 @@
 #include "../config/ExternalLibConfig.h"
 #include "../config/DataDictionary.h"
 
-static_assert(AssistNowToken[0] != '\0', "AssistNowToken missing, please add token from u-blox website before compilation.");
+static_assert(GPS_ASSISTNOW_TOKEN[0] != '\0', "GPS_ASSISTNOW_TOKEN missing, please add token from u-blox website before compilation.");
 
 enum GPSReturnStatus{
     GPS_SUCCESS,

@@ -4,6 +4,8 @@
 #include "../config/ExternalLibConfig.h"
 #include "../config/DataDictionary.h"
 
+//there isn't much get functions in the Adafruit_AlphaNum4 library, so debug code will be limited
+
 enum DigitMapping
 {   
     NUM_0 = 0x213F,

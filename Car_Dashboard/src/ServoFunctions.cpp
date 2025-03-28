@@ -1,20 +1,24 @@
 #include "../include/ServoFunctions.h"
 
-bool initializeServo(Servo &servo_x, const int pin, int min, int max){
+ServoReturnStatus initializeServo(Servo &servo_x, const int pin, int min, int max){
     servo_x.attach(pin, min, max);
-    return servo_x.attached();
+    return servo_x.attached() ? SERVO_ATTACHED : SERVO_ERROR;
 }
 
-int readPosition(Servo &servo_x){
-    return servo_x.read();
+ServoReturnStatus readPosition(Servo &servo_x, int &position){
+    if(!servo_x.attached()) return SERVO_NOT_ATTACHED;
+    position = servo_x.read();
+    return SERVO_COMMAND_SUCCESS;
 }
 
-void writePosition(Servo &servo_x, int position, int min, int max){
+ServoReturnStatus writePosition(Servo &servo_x, int position, int min, int max){
+    if(!servo_x.attached()) return SERVO_NOT_ATTACHED;
     position = position >= min ? (position <= max ? position : max) : min;
     servo_x.write(position);
+    return SERVO_COMMAND_SUCCESS;
 }
 
-bool closeServo(Servo &servo_x){
+ServoReturnStatus closeServo(Servo &servo_x){
     servo_x.detach();
-    return !servo_x.attached();
+    return !servo_x.attached() ? SERVO_DETACHED : SERVO_ERROR;
 }
