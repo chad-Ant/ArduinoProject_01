@@ -2,26 +2,27 @@
 #include "../include/TimerFunctions.h"
 
 WiFiReturnStatus initializeWifi(){
-    if (WiFi.status() == WL_NO_SHIELD) return WIFI_FAILED_NO_SHIELD;
+    if (WiFi.status() == WL_NO_SHIELD) return WiFiReturnStatus::NOK_NO_SHIELD;
 
     unsigned long startTime = 0;
-    for (int i = 0; i < WIFI_MAX_RETRY; i++){
-        WiFi.begin(WIFI_SSID,WIFI_PASS);
+    char *SSIDs[] = {WIFI_SSID,WIFI_SSID_BACKUP_1,WIFI_SSID_BACKUP_2,WIFI_PASS,WIFI_PASS_BACKUP_1,WIFI_PASS_BACKUP_2};
+    for (int i = 0; i <= 2; i++){
+        WiFi.begin(SSIDs[i],SSIDs[i+3]);
         startTime = millis();
         while (!isTimeout(WIFI_WAIT_MSEC,startTime));
-        if (WiFi.status() == WL_CONNECTED) return WIFI_SUCCESS;
+        if (WiFi.status() == WL_CONNECTED) return WiFiReturnStatus::OK;
     }
-    return WIFI_FAILED_NO_CONNECTION;
+    return WiFiReturnStatus::NOK_NO_CONNECTION;
 }
 
 WiFiReturnStatus configStaticIP(const IPAddress ip, const IPAddress dns){
-    if (WiFi.status() == WL_NO_SHIELD) WIFI_CFG_STC_IP_FAILED_NO_SHIELD;
-    if (ip == INADDR_NONE) return WIFI_CFG_STC_IP_FAILED_EMPTY_IP;
-    if (dns == INADDR_NONE) return WIFI_CFG_STC_IP_FAILED_EMPTY_DNS;
+    if (WiFi.status() == WL_NO_SHIELD) WiFiReturnStatus::NOK_NO_SHIELD;
+    if (ip == INADDR_NONE) return WiFiReturnStatus::NOK_EMPTY_IP;
+    if (dns == INADDR_NONE) return WiFiReturnStatus::NOK_EMPTY_DNS;
 
     WiFi.config(ip, dns);
-    if (WiFi.localIP() == ip) return WIFI_CFG_STC_IP_SUCCESS;
-    else return WIFI_CFG_STC_IP_FAILED_IP_MISMATCH;
+    if (WiFi.localIP() == ip) return WiFiReturnStatus::OK;
+    else return WiFiReturnStatus::NOK_IP_MISMATCH;
 }
 
 bool isWifiConnected(){
@@ -29,23 +30,23 @@ bool isWifiConnected(){
 }
 
 WiFiReturnStatus getUnixTime(unsigned long &unixTime){
-    if (WiFi.status() != WL_CONNECTED) return WIFI_GET_TIME_FAILED_NO_CONNECTION;
+    if (WiFi.status() != WL_CONNECTED) return WiFiReturnStatus::NOK_NO_CONNECTION;
     unixTime = WiFi.getTime(); //static IP will cause this to fail, suggest using dynamic IP
-    if (unixTime != 0) return WIFI_GET_TIME_SUCCESS;
-    else return WIFI_GET_TIME_FAILED_ZERO_TIME;
+    if (unixTime != 0) return WiFiReturnStatus::OK;
+    else return WiFiReturnStatus::NOK_ZERO_TIME;
 }
 
 WiFiReturnStatus getLocalIP(IPAddress &localIP){
-    if (WiFi.status() != WL_CONNECTED) return WIFI_GET_IP_FAILED_NO_CONNECTION;
+    if (WiFi.status() != WL_CONNECTED) return WiFiReturnStatus::NOK_NO_CONNECTION;
     localIP = WiFi.localIP();
-    if (localIP != INADDR_NONE) return WIFI_GET_IP_SUCCESS;
-    else return WIFI_GET_IP_FAILED_EMPTY_IP;
+    if (localIP != INADDR_NONE) return WiFiReturnStatus::OK;
+    else return WiFiReturnStatus::NOK_EMPTY_IP;
 }
 
 WiFiReturnStatus closeWifi(){
     WiFi.disconnect();
-    if (WiFi.status() != WL_CONNECTED) return WIFI_CLOSE_SUCCESS;
-    else return WIFI_CLOSE_FAILED;
+    if (WiFi.status() != WL_CONNECTED) return WiFiReturnStatus::OK;
+    else return WiFiReturnStatus::NOK_CLOSE_FAILED;
 
 }
 

@@ -12,6 +12,7 @@
         "xmemory": "cpp",
         "ctime": "cpp",
         "initializer_list": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "exception": "cpp"
     }
 }

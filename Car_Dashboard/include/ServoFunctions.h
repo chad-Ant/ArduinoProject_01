@@ -4,12 +4,15 @@
 #include "../config/ExternalLibConfig.h"
 #include "../config/DataDictionary.h"
 
-enum ServoReturnStatus{
-    SERVO_ATTACHED = 0,
-    SERVO_DETACHED = 1,
-    SERVO_COMMAND_SUCCESS = 2,
-    SERVO_ERROR = -1,
-    SERVO_NOT_ATTACHED = -2,
+//Servos use predefined analog interfaces
+
+#define MAX_XAXIS_ANGLE 180
+#define MAX_YAXIS_ANGLE 180
+
+enum class ServoReturnStatus{
+    OK = 0,
+    NOK_INTERNAL_ERROR = -1,
+    NOK_NOT_ATTACHED = -2,
     SERVO_NOT_DETACHED = -3
 };
 

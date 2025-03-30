@@ -4,18 +4,17 @@
 #include "../config/ExternalLibConfig.h"
 #include "../config/DataDictionary.h"
 
+//GPS module uses Serial1 interface for MKR1000 WiFi, dedicated I2C interface for MKR ZERO
+
 static_assert(GPS_ASSISTNOW_TOKEN[0] != '\0', "GPS_ASSISTNOW_TOKEN missing, please add token from u-blox website before compilation.");
 
-enum GPSReturnStatus{
-    GPS_SUCCESS,
-    GPS_FAILED,
-    GPS_DATA_STALE,
-    GPS_DATA_FRESH,
-    GPS_SET_RATE_SUCCESS,
-    GPS_SET_RATE_FAILED,
-    GPS_ASSISTNOW_SUCCESS,
-    GPS_ASSISTNOW_REQUEST_FAILED,
-    GPS_ASSISTNOW_PUSH_FAILED
+enum class GPSReturnStatus{
+    OK = 0,
+    NOK_INIT_FAILED = -1,
+    DATA_STALE = 1,
+    NOK_SET_RATE_FAILED = -2,
+    NOK_AN_REQUEST_FAILED = -3,
+    NOK_AN_PUSH_FAILED = -4
 };
 
 enum GPSSignalStrength{

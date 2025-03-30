@@ -5,7 +5,6 @@
 #include <SparkFun_u-blox_GNSS_Arduino_Library.h>
 #include <Servo.h>
 #include <Arduino.h>
-#include <Adafruit_GFX.h>
 #include "Adafruit_LEDBackpack.h"
 //#include "LowPower.h"
 #include <SPI.h>

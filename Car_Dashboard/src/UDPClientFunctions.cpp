@@ -2,7 +2,7 @@
 #include "../include/WiFiFunctions.h"
 
 WiFiUDP *initializeUDPInstance(){
-    if (!initializeWifi())
+    if (initializeWifi() != WiFiReturnStatus::OK)
         return nullptr;
     WiFiUDP udp;
     udp.begin(UDPPort);

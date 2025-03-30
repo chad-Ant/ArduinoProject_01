@@ -31,33 +31,33 @@ HttpClient *initializeHTTPSInstance(WiFiClient &wifiClientInstance, const char *
 }
 
 HTTPReturnStatus HTTPGet(HttpClient *client,const String request, String &payload){
-    if (!client) return HTTP_HTTP_CLIENT_NULL;
-    if (!isWifiConnected()) return HTTP_WIFI_DISCONNECTED;
+    if (!client) return HTTPReturnStatus::FAILED_CLIENT_NULL;
+    if (!isWifiConnected()) return HTTPReturnStatus::NOK_WIFI_DISCONNECTED;
     
     client->get(request);
-    if (!client->connected()) return HTTP_SERVER_NOT_CONNECTED;    
+    if (!client->connected()) return HTTPReturnStatus::NOK_NOT_CONNECTED;    
     int responseCode = client->responseStatusCode();
-    if (responseCode >= 400 && responseCode < 500) return HTTP_CLIENT_ERROR;
-    if (responseCode >= 500) return HTTP_SERVER_ERROR;
-    if (responseCode < 0) return HTTP_INTERNAL_LIB_ERROR;
+    if (responseCode >= 400 && responseCode < 500) return HTTPReturnStatus::NOK_CLIENT_ERROR;
+    if (responseCode >= 500) return HTTPReturnStatus::NOK_SERVER_ERROR;
+    if (responseCode < 0) return HTTPReturnStatus::NOK_INTERNAL_ERROR;
 
     payload = client->responseBody();
-    return HTTP_COMMAND_SUCCESS;
+    return HTTPReturnStatus::OK;
 }
 
 HTTPReturnStatus HTTPPost(HttpClient *client, const String request, const String contentType, const String body, String &payload){
-    if (!client) return HTTP_HTTP_CLIENT_NULL;
-    if (!isWifiConnected()) return HTTP_WIFI_DISCONNECTED;
+    if (!client) return HTTPReturnStatus::FAILED_CLIENT_NULL;
+    if (!isWifiConnected()) return HTTPReturnStatus::NOK_WIFI_DISCONNECTED;
     
     client->post(request,contentType,body);
-    if (!client->connected()) return HTTP_SERVER_NOT_CONNECTED;
+    if (!client->connected()) return HTTPReturnStatus::NOK_NOT_CONNECTED;
     int responseCode = client->responseStatusCode();
-    if (responseCode >= 400 && responseCode < 500) return HTTP_CLIENT_ERROR;
-    if (responseCode >= 500) return HTTP_SERVER_ERROR;
-    if (responseCode < 0) return HTTP_INTERNAL_LIB_ERROR;
+    if (responseCode >= 400 && responseCode < 500) return HTTPReturnStatus::NOK_CLIENT_ERROR;
+    if (responseCode >= 500) return HTTPReturnStatus::NOK_SERVER_ERROR;
+    if (responseCode < 0) return HTTPReturnStatus::NOK_INTERNAL_ERROR;
 
     payload = client->responseBody();
-    return HTTP_COMMAND_SUCCESS;
+    return HTTPReturnStatus::OK;
 }
 
 void closeHTTPInstance(HttpClient *client){

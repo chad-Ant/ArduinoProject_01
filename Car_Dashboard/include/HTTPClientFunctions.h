@@ -4,19 +4,21 @@
 #include "../config/ExternalLibConfig.h"
 #include "../config/DataDictionary.h"
 
-enum HTTPReturnStatus{
-    HTTP_HTTP_CLIENT_NULL,
-    HTTP_WIFI_DISCONNECTED,
-    HTTP_SERVER_NOT_CONNECTED,
-    HTTP_CLIENT_ERROR,
-    HTTP_SERVER_ERROR,
-    HTTP_INTERNAL_LIB_ERROR,
-    HTTP_COMMAND_SUCCESS
+enum class HTTPReturnStatus{
+    OK = 0,
+    FAILED_CLIENT_NULL = -1,
+    NOK_WIFI_DISCONNECTED = -2,
+    NOK_NOT_CONNECTED = -3,
+    NOK_CLIENT_ERROR = -4,
+    NOK_SERVER_ERROR = -5,
+    NOK_INTERNAL_ERROR = -6
 };
 
 #define HTTPPort 80U
 #define HTTPSPort 443U
 #define HTTPTimeout 20000UL
+#define URL_BUFFER_SIZE 256U
+
 HttpClient *initializeHTTPInstance(WiFiClient &wifiClientInstance, const char *URL, bool overrideWifiInstance = false);
 HttpClient *initializeHTTPSInstance(WiFiClient &wifiClientInstance, const char *URL, bool overrideWifiInstance = false);
 HTTPReturnStatus HTTPGet(HttpClient *client,const String request, String &payload);

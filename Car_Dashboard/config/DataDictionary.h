@@ -11,13 +11,10 @@
 
 #define WIFI_SSID                                   "TP-Link_2890"
 #define WIFI_PASS                                   "52000393"
-#define WIFI_SSID_BACKUP_1                          "xxx"
-#define WIFI_PASS_BACKUP_1                          "xxx"
-#define WIFI_SSID_BACKUP_2                          "Pixel_5101"
-#define WIFI_PASS_BACKUP_2                          "AndroidPixel6"
-#define WIFI_SSID_BACKUP_3                          "zzz"
-#define WIFI_PASS_BACKUP_3                          "zzz"
-#define URL_BUFFER_SIZE                              256
+#define WIFI_SSID_BACKUP_1                          "Pixel_5101"
+#define WIFI_PASS_BACKUP_1                          "AndroidPixel6"
+#define WIFI_SSID_BACKUP_2                          "401 402 403"
+#define WIFI_PASS_BACKUP_2                          "0938690720kien"
 
 #define GPS_DEFAULT_I2C_ADDRESS                      66U
 #define GPS_BACKUP_I2C_ADDRESS                       8U
@@ -46,11 +43,7 @@
 
 #define CAN_BAUDRATE_DEFAULT                         500000UL
 //SPI interface pins, avoid using these for other purposes
-//#define MCP2515_DEFAULT_CS_PIN          3
-//#define MCP2515_DEFAULT_INT_PIN         7
-
-
-#define MAX_XAXIS_ANGLE                              180
-#define MAX_YAXIS_ANGLE                              180
+#define MCP2515_DEFAULT_CS_PIN          3
+#define MCP2515_DEFAULT_INT_PIN         7
 
 #endif

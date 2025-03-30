@@ -18,7 +18,7 @@ GPSReturnStatus initializeGPS(SFE_UBLOX_GNSS &myGNSS){
         myGNSS.setNavigationFrequency(GPS_REFRESH_RATE);
         myGNSS.setNavigationRate(1); //one nav solution per update
         myGNSS.setAutoPVTrate(1);
-        return GPS_SUCCESS;
+        return GPSReturnStatus::OK;
     }
     
     //set baud rate to custom baud rate for high resolution positioning
@@ -37,7 +37,7 @@ GPSReturnStatus initializeGPS(SFE_UBLOX_GNSS &myGNSS){
         myGNSS.setNavigationFrequency(GPS_REFRESH_RATE);
         myGNSS.setNavigationRate(1); //one nav solution per update
         myGNSS.setAutoPVTrate(1);
-        return GPS_SUCCESS;
+        return GPSReturnStatus::OK;
     }
 
     //use the default options if failed to set up high res positioning
@@ -50,11 +50,11 @@ GPSReturnStatus initializeGPS(SFE_UBLOX_GNSS &myGNSS){
         myGNSS.setNavigationFrequency(1); //1Hz, safest option here
         myGNSS.setNavigationRate(1); //one nav solution per update
         myGNSS.setAutoPVTrate(1); 
-        return GPS_SUCCESS;
+        return GPSReturnStatus::OK;
     }
 
     //give up lmao
-    return GPS_FAILED;
+    return GPSReturnStatus::NOK_INIT_FAILED;
 }
 
 GPSReturnStatus intializeGPS_I2C(SFE_UBLOX_GNSS &myGNSS){
@@ -63,7 +63,7 @@ GPSReturnStatus intializeGPS_I2C(SFE_UBLOX_GNSS &myGNSS){
         i2cInitialized = true;
     }
 
-    if (!myGNSS.begin(Wire,GPS_DEFAULT_I2C_ADDRESS) || !myGNSS.begin(Wire,GPS_BACKUP_I2C_ADDRESS)) return GPS_FAILED;
+    if (!myGNSS.begin(Wire,GPS_DEFAULT_I2C_ADDRESS) || !myGNSS.begin(Wire,GPS_BACKUP_I2C_ADDRESS)) return GPSReturnStatus::NOK_INIT_FAILED;
     delay(500);
 #ifndef GPS_ENABLE_NMEA
     myGNSS.setI2COutput(COM_TYPE_UBX);
@@ -73,27 +73,27 @@ GPSReturnStatus intializeGPS_I2C(SFE_UBLOX_GNSS &myGNSS){
     myGNSS.setNavigationFrequency(GPS_REFRESH_RATE);
     myGNSS.setNavigationRate(1); //one nav solution per update
     myGNSS.setAutoPVTrate(1);
-    return GPS_SUCCESS;
+    return GPSReturnStatus::OK;
 }
 
 GPSReturnStatus getLatLongAlt(SFE_UBLOX_GNSS &myGNSS, float &latitude, float &longitude, float &altitude){
-    if (!myGNSS.getPVT()) return GPS_DATA_STALE;
+    if (!myGNSS.getPVT()) return GPSReturnStatus::DATA_STALE;
     latitude = (float)(myGNSS.getLatitude()) * 0.0000001;
     longitude = (float)(myGNSS.getLongitude()) * 0.0000001;
     altitude = (float)(myGNSS.getAltitudeMSL()) * 0.001;
-    return GPS_DATA_FRESH;
+    return GPSReturnStatus::OK;
 }
 
 GPSReturnStatus getSpeedHeading(SFE_UBLOX_GNSS &myGNSS, float &speed, float &heading){
-    if (!myGNSS.getPVT()) return GPS_DATA_STALE;
+    if (!myGNSS.getPVT()) return GPSReturnStatus::DATA_STALE;
     speed = (float)(myGNSS.getGroundSpeed()) * 0.0036; // km/h
     heading = (float)(myGNSS.getHeading()) * 0.00001;  // deg
-    return GPS_DATA_FRESH;
+    return GPSReturnStatus::OK;
 }
 
 GPSReturnStatus setAcquisitionFrequency(SFE_UBLOX_GNSS &myGNSS, uint8_t rateHz){
     rateHz = rateHz >= 1 ? (rateHz < 10 ? rateHz : 10) : 1;
-    return myGNSS.setNavigationFrequency(rateHz) ? GPS_SET_RATE_SUCCESS : GPS_SET_RATE_FAILED;
+    return myGNSS.setNavigationFrequency(rateHz) ? GPSReturnStatus::OK : GPSReturnStatus::NOK_SET_RATE_FAILED;
 }
 
 GPSSignalStrength evaluateSignal(SFE_UBLOX_GNSS &myGNSS){
@@ -124,14 +124,14 @@ GPSReturnStatus requestOnlineAssistNow(SFE_UBLOX_GNSS &myGNSS,HttpClient *ubloxT
     char requestBuffer[256] = "";
     sprintf(requestBuffer,GPS_GET_ASSISTNOW_ONLINE,GPS_ASSISTNOW_TOKEN,GPS_DEFAULT_POSITION);
     String payload = "";
-    if (HTTPGet(ubloxTS,requestBuffer,payload) != HTTP_COMMAND_SUCCESS) return GPS_ASSISTNOW_REQUEST_FAILED; 
+    if (HTTPGet(ubloxTS,requestBuffer,payload) != HTTPReturnStatus::OK) return GPSReturnStatus::NOK_AN_REQUEST_FAILED; 
 #ifdef ROBUST_ASSISTNOW
     myGNSS.setAckAiding(1);
     if (myGNSS.pushAssistNowData(payload,payload.length(),SFE_UBLOX_MGA_ASSIST_ACK_ENQUIRE,100) > 0) return GPS_ASSISTNOW_SUCCESS;
 #else
-    if (myGNSS.pushAssistNowData(payload,payload.length()) > 0) return GPS_ASSISTNOW_SUCCESS;
+    if (myGNSS.pushAssistNowData(payload,payload.length()) > 0) return GPSReturnStatus::OK;
 #endif
-    return GPS_ASSISTNOW_PUSH_FAILED;
+    return GPSReturnStatus::NOK_AN_PUSH_FAILED;
 }
 
 //MKR mControllers don't have enough memory to store AssistNow Offline data
