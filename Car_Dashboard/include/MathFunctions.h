@@ -4,6 +4,10 @@
 #include "../config/ExternalLibConfig.h"
 #include "../config/DataDictionary.h"
 
+inline void normalize(float &num, float lowerBound, float upperBound){
+    num = 
+}
+
 inline void transpose2x2(float &array[2][2]){
     swap(array[0][1],array[1][0]);
 }
@@ -18,11 +22,17 @@ inline void inverse2x2(float &array[2][2]){
     array = {{array[1][1] * detReciprocal, -array[0][1] * detReciprocal},{-array[1][0] * detReciprocal, array[0][0] * detReciprocal}};
 }
 
-inline void reciprocal(float &num, int maxIteration, float tolerance){
-    float guess = num * 
-    do{
-
-    } while ();
+int reciprocal(float num){
+    int exponent = 0;
+    float mantissa = frexp(num, &exponent);
+    //normalize to [1,2)
+    mantissa *= 2.0;
+    exponent -= 1;
+    
+    float guess = num * ;
+    for (int i = 0; i < 3; i++){ //allow 3 iterations
+        guess *= 2 - num * guess;
+    }
 }
 
 enum FilterWSize{
