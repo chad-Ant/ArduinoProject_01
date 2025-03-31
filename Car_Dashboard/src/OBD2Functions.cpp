@@ -1,5 +1,6 @@
 #include "../include/OBD2Functions.h"
 #include "../include/TimerFunctions.h"
+#include "../include/MathFunctions.h"
 
 void writeRegister(uint8_t address, uint8_t value)
 {
@@ -113,9 +114,113 @@ CANReturnStatus receiveS1Command(OBD2Config &config, char *outputBuffer, unsigne
     uint8_t RxLength = CAN.read() - 2;
     bool isS1Response = CAN.read() == 0x41;
     commandRx = static_cast<OBD2_S1Command>(CAN.read());
-    if (!packetParsed || RxLength < 1 || !isS1Response) return CANReturnStatus::NOK_TIMEOUT;
+    unsigned long timeStart = millis();
+    while (!packetParsed || RxLength < 1 || !isS1Response){
+        if (isTimeout(timeout,timeStart)) return CANReturnStatus::NOK_TIMEOUT;
+    }
+    
     for (int i = 0; i < RxLength; i++){
         outputBuffer[i] = CAN.read();
     }
+    return CANReturnStatus::OK;
+}
+
+CANReturnStatus fetchRPM(OBD2Config &config, float &rpm){
+    char *buffer;
+    OBD2_S1Command receivedCommand = NONE;
+    sendS1Command(config,RPM);
+    receiveS1Command(config, buffer, 500, receivedCommand);
+    if (receivedCommand != RPM) return CANReturnStatus::NOK_BAD_CMD;
+    rpm = ((float)buffer[0] * 256.0 + (float)buffer[1]) * 0.25;
+    return CANReturnStatus::OK;
+}
+
+CANReturnStatus fetchSpeed(OBD2Config &config, float &speed){
+    char *buffer;
+    OBD2_S1Command receivedCommand = NONE;
+    sendS1Command(config,SPEED);
+    receiveS1Command(config, buffer, 500, receivedCommand);
+    if (receivedCommand != SPEED) return CANReturnStatus::NOK_BAD_CMD;
+    speed = (float)buffer[0];
+    return CANReturnStatus::OK;
+}
+
+CANReturnStatus fetchGearRatio(OBD2Config &config, float &gearRatio){
+    char *buffer;
+    OBD2_S1Command receivedCommand = NONE;
+    sendS1Command(config,GEAR_RTIO);
+    receiveS1Command(config, buffer, 500, receivedCommand);
+    if (receivedCommand != GEAR_RTIO) return CANReturnStatus::NOK_BAD_CMD;
+    gearRatio = ((float)buffer[2] * 256.0 + (float)buffer[3]) * 0.001;
+    return CANReturnStatus::OK;
+}
+
+CANReturnStatus fetchAirPressure(OBD2Config &config, float &airPressure){
+    char *buffer;
+    OBD2_S1Command receivedCommand = NONE;
+    sendS1Command(config,AIR_PRES);
+    receiveS1Command(config, buffer, 500, receivedCommand);
+    if (receivedCommand != AIR_PRES) return CANReturnStatus::NOK_BAD_CMD;
+    airPressure = (float)buffer[0];
+    return CANReturnStatus::OK;
+}
+
+CANReturnStatus fetchODO(OBD2Config &config, float &odo){
+    char *buffer;
+    OBD2_S1Command receivedCommand = NONE;
+    sendS1Command(config,ODOMETER);
+    receiveS1Command(config, buffer, 500, receivedCommand);
+    if (receivedCommand != ODOMETER) return CANReturnStatus::NOK_BAD_CMD;
+    odo = (float) ((unsigned int)buffer[0] << 24 + (unsigned int)buffer[1] << 16 + (unsigned int)buffer[2] << 8 + (unsigned int)buffer[3]) * 0.1;
+    return CANReturnStatus::OK;
+}
+
+CANReturnStatus fetchFuelLvl(OBD2Config &config, float &fuel){
+    char *buffer;
+    OBD2_S1Command receivedCommand = NONE;
+    sendS1Command(config,FUEL_LVL);
+    receiveS1Command(config, buffer, 500, receivedCommand);
+    if (receivedCommand != FUEL_LVL) return CANReturnStatus::NOK_BAD_CMD;
+    fuel = interpolate((float)buffer[0], 255.0, 0.0);
+    return CANReturnStatus::OK;
+}
+
+CANReturnStatus fetchEngineTemp(OBD2Config &config, float &engineTemp){
+    char *buffer;
+    OBD2_S1Command receivedCommand = NONE;
+    sendS1Command(config,ENGINE_TEMP);
+    receiveS1Command(config, buffer, 500, receivedCommand);
+    if (receivedCommand != ENGINE_TEMP) return CANReturnStatus::NOK_BAD_CMD;
+    engineTemp = (float)buffer[0] - 40.0;
+    return CANReturnStatus::OK;
+}
+
+CANReturnStatus fetchFuelRate(OBD2Config &config, float &fuelRate){
+    char *buffer;
+    OBD2_S1Command receivedCommand = NONE;
+    sendS1Command(config,FUEL_RATE);
+    receiveS1Command(config, buffer, 500, receivedCommand);
+    if (receivedCommand != FUEL_RATE) return CANReturnStatus::NOK_BAD_CMD;
+    fuelRate = ((float)buffer[0] * 256 + (float)buffer[1]) * 0.05;
+    return CANReturnStatus::OK;
+}
+
+CANReturnStatus fetchEngineLoad(OBD2Config &config, float &engineLoad){
+    char *buffer;
+    OBD2_S1Command receivedCommand = NONE;
+    sendS1Command(config,ENGINE_LOAD);
+    receiveS1Command(config, buffer, 500, receivedCommand);
+    if (receivedCommand != ENGINE_LOAD) return CANReturnStatus::NOK_BAD_CMD;
+    engineLoad = interpolate((float)buffer[0], 255.0, 0.0);
+    return CANReturnStatus::OK;
+}
+
+CANReturnStatus fetchThrottle(OBD2Config &config, float &throttle){
+    char *buffer;
+    OBD2_S1Command receivedCommand = NONE;
+    sendS1Command(config,THROTTLE_POSN);
+    receiveS1Command(config, buffer, 500, receivedCommand);
+    if (receivedCommand != THROTTLE_POSN) return CANReturnStatus::NOK_BAD_CMD;
+    throttle = interpolate((float)buffer[0], 255.0, 0.0);
     return CANReturnStatus::OK;
 }

@@ -54,4 +54,15 @@ bool checkCANModule();
 CANReturnStatus getSupportedPIDs(OBD2Config &config,long timeoutInterval = OBD2_TIMEOUT_MSEC);
 CANReturnStatus sendS1Command(OBD2Config &config, const OBD2_S1Command command);
 CANReturnStatus receiveS1Command(OBD2Config &config, char *outputBuffer, unsigned long timeout, OBD2_S1Command &commandRx);
+CANReturnStatus fetchRPM(OBD2Config &config, float &rpm);
+CANReturnStatus fetchSpeed(OBD2Config &config, float &speed);
+CANReturnStatus fetchGearRatio(OBD2Config &config, float &gearRatio);
+CANReturnStatus fetchAirPressure(OBD2Config &config, float &airPressure);
+CANReturnStatus fetchODO(OBD2Config &config, float &odo);
+CANReturnStatus fetchFuelLvl(OBD2Config &config, float &fuel);
+CANReturnStatus fetchEngineTemp(OBD2Config &config, float &engineTemp);
+CANReturnStatus fetchFuelRate(OBD2Config &config, float &fuelRate);
+CANReturnStatus fetchEngineLoad(OBD2Config &config, float &engineLoad);
+CANReturnStatus fetchThrottle(OBD2Config &config, float &throttle);
+
 #endif

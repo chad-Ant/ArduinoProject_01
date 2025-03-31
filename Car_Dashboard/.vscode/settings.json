@@ -3,6 +3,8 @@
         "limits": "cpp",
         "utility": "cpp",
         "xutility": "cpp",
-        "initializer_list": "cpp"
+        "initializer_list": "cpp",
+        "climits": "cpp",
+        "memory": "cpp"
     }
 }
