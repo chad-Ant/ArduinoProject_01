@@ -5,6 +5,7 @@
         "xutility": "cpp",
         "initializer_list": "cpp",
         "climits": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "cstddef": "cpp"
     }
 }

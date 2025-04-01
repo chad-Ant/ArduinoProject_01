@@ -76,11 +76,36 @@ GPSReturnStatus intializeGPS_I2C(SFE_UBLOX_GNSS &myGNSS){
     return GPSReturnStatus::OK;
 }
 
+GPSReturnStatus getLatLong(SFE_UBLOX_GNSS &myGNSS, float &latitude, float &longitude){
+    if (!myGNSS.getPVT()) return GPSReturnStatus::DATA_STALE;
+    latitude = (float)(myGNSS.getLatitude()) * 0.0000001;
+    longitude = (float)(myGNSS.getLongitude()) * 0.0000001;
+    return GPSReturnStatus::OK;
+}
+
+GPSReturnStatus getAlt(SFE_UBLOX_GNSS &myGNSS, float &altitude){
+    if (!myGNSS.getPVT()) return GPSReturnStatus::DATA_STALE;
+    altitude = (float)(myGNSS.getAltitudeMSL()) * 0.001;
+    return GPSReturnStatus::OK;
+}
+
 GPSReturnStatus getLatLongAlt(SFE_UBLOX_GNSS &myGNSS, float &latitude, float &longitude, float &altitude){
     if (!myGNSS.getPVT()) return GPSReturnStatus::DATA_STALE;
     latitude = (float)(myGNSS.getLatitude()) * 0.0000001;
     longitude = (float)(myGNSS.getLongitude()) * 0.0000001;
     altitude = (float)(myGNSS.getAltitudeMSL()) * 0.001;
+    return GPSReturnStatus::OK;
+}
+
+GPSReturnStatus getSpeed(SFE_UBLOX_GNSS &myGNSS, float &speed){
+    if (!myGNSS.getPVT()) return GPSReturnStatus::DATA_STALE;
+    speed = (float)(myGNSS.getGroundSpeed()) * 0.0036; // km/h
+    return GPSReturnStatus::OK;
+}
+
+GPSReturnStatus getHeading(SFE_UBLOX_GNSS &myGNSS, float &heading){
+    if (!myGNSS.getPVT()) return GPSReturnStatus::DATA_STALE;
+    heading = (float)(myGNSS.getHeading()) * 0.00001;  // deg
     return GPSReturnStatus::OK;
 }
 

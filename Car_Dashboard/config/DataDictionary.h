@@ -43,7 +43,7 @@
 
 #define CAN_BAUDRATE_DEFAULT                         500000UL
 //SPI interface pins, avoid using these for other purposes
-#define MCP2515_DEFAULT_CS_PIN          3
-#define MCP2515_DEFAULT_INT_PIN         7
+//#define MCP2515_DEFAULT_CS_PIN          3
+//#define MCP2515_DEFAULT_INT_PIN         7
 
 #endif

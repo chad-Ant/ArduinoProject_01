@@ -33,15 +33,27 @@ enum OBD2_S1Command{
     NONE =          0x00,
     RPM =           0x0C,
     SPEED =         0x0D,
-    GEAR_RTIO =    0xA4,
+    GEAR_RTIO =     0xA4,
     AIR_PRES =      0x33,
     ODOMETER =      0xA6,
     FUEL_LVL =      0x2F,
-    ENGINE_TEMP =    0x05,
+    ENGINE_TEMP =   0x05,
     FUEL_RATE =     0x5E,
     ENGINE_LOAD =   0x04,
-    THROTTLE_POSN =  0x11
+    THROTTLE_POSN = 0x11
 };
+
+#define NONE_T          0
+#define RPM_T           2
+#define SPEED_T         1
+#define GEAR_RTIO_T     4
+#define AIR_PRES_T      1
+#define ODOMETER_T      4
+#define FUEL_LVL_T      1
+#define ENGINE_TEMP_T   1
+#define FUEL_RATE_T     2
+#define ENGINE_LOAD_T   1
+#define THROTTLE_POSN_T 1
 
 struct OBD2Config{
     CAN_TxAddress TxAddress;
@@ -49,11 +61,11 @@ struct OBD2Config{
     uint32_t supportedPIDs[7];
 };
 
-CANReturnStatus initializeOBD2(OBD2Config &config, CAN_TxAddress TxAddr, CAN_RxAddress RxAddr);
+CANReturnStatus initializeOBD2(OBD2Config &config, CAN_TxAddress TxAddr, CAN_RxAddress RxAddr, int csPin = MCP2515_DEFAULT_CS_PIN, int irqPin = MCP2515_DEFAULT_INT_PIN);
 bool checkCANModule();
 CANReturnStatus getSupportedPIDs(OBD2Config &config,long timeoutInterval = OBD2_TIMEOUT_MSEC);
 CANReturnStatus sendS1Command(OBD2Config &config, const OBD2_S1Command command);
-CANReturnStatus receiveS1Command(OBD2Config &config, char *outputBuffer, unsigned long timeout, OBD2_S1Command &commandRx);
+CANReturnStatus receiveS1Command(OBD2Config &config, char *outputBuffer, byte bufferSize, OBD2_S1Command &commandRx, unsigned long timeout = 1000);
 CANReturnStatus fetchRPM(OBD2Config &config, float &rpm);
 CANReturnStatus fetchSpeed(OBD2Config &config, float &speed);
 CANReturnStatus fetchGearRatio(OBD2Config &config, float &gearRatio);
