@@ -19,10 +19,11 @@ float interpolate(float num, float uBound, float lBound, float resultuBound, flo
     if (num >= uBound) return resultuBound;
     if (num <= lBound) return resultlBound;
     float deltaSource = (uBound - lBound) < 0.001 ? 0.001 : uBound - lBound;
-    float deltaSink = (resultuBound - resultlBound) < 0.001 ? 0.001 : resultuBound - resultlBound;
+    float deltaSink = resultuBound - resultlBound;
     return (num - lBound) * deltaSink * fastReciprocal(deltaSource) + resultlBound;
 }
 
+/* save for later
 void inverse2x2(float **array){
     float det = array[0][0] * array[1][1] - array[0][1] * array[1][0];
     if (det == 0){
@@ -40,3 +41,4 @@ void inverse2x2(float **array){
     array[1][0] = -array[1][0] * detReciprocal;
     array[1][1] = tempValue * detReciprocal;
 }
+    */

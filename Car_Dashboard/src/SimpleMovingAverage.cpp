@@ -1,4 +1,4 @@
-#include "../include/MathFunctions.h"
+#include "../include/SignalProcessingFunctions.h"
 
 SimpleMovingAverage::SimpleMovingAverage(const FilterWSize wSize):
     windowSize(wSize),

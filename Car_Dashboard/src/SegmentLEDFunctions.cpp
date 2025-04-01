@@ -1,11 +1,9 @@
 #include "../include/SegmentLEDFunctions.h"
-#include "../include/QuickMathFunctions.h"
+#include "../include/MathFunctions.h"
 #include "../include/TimerFunctions.h"
 
-DigitMapping mapDigitMirror(int digit, bool decimalPoint)
-{
-    switch (digit)
-    {
+DigitMapping mapDigitMirror(int digit, bool decimalPoint){
+    switch (digit){
     case 0:
         return decimalPoint ? NUM_0_DP : NUM_0;
     case 1:
@@ -31,10 +29,8 @@ DigitMapping mapDigitMirror(int digit, bool decimalPoint)
     }
 }
 
-DigitMapping mapDigit(int digit, bool decimalPoint)
-{
-    switch (digit)
-    {
+DigitMapping mapDigit(int digit, bool decimalPoint){
+    switch (digit){
     case 0:
         return decimalPoint ? NUM_0_DP : NUM_0;
     case 1:
@@ -60,10 +56,8 @@ DigitMapping mapDigit(int digit, bool decimalPoint)
     }
 }
 
-DigitMapping mapStringMirror(char c)
-{
-    switch (c)
-    {
+DigitMapping mapStringMirror(char c){
+    switch (c){
     case '0':
         return NUM_0;
     case '1':
@@ -179,8 +173,7 @@ DigitMapping mapStringMirror(char c)
 }
 
 bool initializeSegmentLED(Adafruit_AlphaNum4 &alpha4){
-    if (!alpha4.begin(SEGLED_ADDRESS))
-        return false;
+    if (!alpha4.begin(SEGLED_ADDRESS)) return false;
     alpha4.setBrightness(15);
     alpha4.clear();
     alpha4.writeDigitRaw(0, ALL_SEGMENTS);
@@ -190,11 +183,9 @@ bool initializeSegmentLED(Adafruit_AlphaNum4 &alpha4){
     alpha4.writeDisplay();
 
     unsigned long startTimeLED = millis();
-
     while (!isTimeout(500,startTimeLED)){
         delay(100);
     }; //wait for 500ms
-    
     alpha4.clear();
     alpha4.writeDisplay();
 
@@ -215,7 +206,8 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number){
         NONE_TO_DISPLAY,
         NONE_TO_DISPLAY,
         NONE_TO_DISPLAY,
-        NONE_TO_DISPLAY};
+        NONE_TO_DISPLAY
+    };
     int integerPart = 0;
     int decimalPart = 0;
     int units = 0;
@@ -223,8 +215,7 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number){
     int hundreds = 0;
     int64_t thousands = 0;
 
-    if (isinf(number))
-    {
+    if (isinf(number)){
         alpha4.clear();
         alpha4.writeDigitRaw(0, CHAR_F_MIRROR);
         alpha4.writeDigitRaw(1, CHAR_N_MIRROR);
@@ -234,8 +225,7 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number){
         return;
     }
 
-    if (isnan(number))
-    {   
+    if (isnan(number)){   
         alpha4.clear();
         alpha4.writeDigitRaw(0, CHAR_N_MIRROR);
         alpha4.writeDigitRaw(1, CHAR_A_MIRROR);
@@ -245,8 +235,7 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number){
         return;
     }
 
-    if (isinf(-number))
-    {
+    if (isinf(-number)){
         alpha4.clear();
         alpha4.writeDigitRaw(0, CHAR_F_MIRROR);
         alpha4.writeDigitRaw(1, CHAR_N_MIRROR);
@@ -259,13 +248,10 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number){
     if (number == 0){
         LEDBuffer[0] = NUM_0_DP;
         LEDBuffer[1] = NUM_0;
-    }
-    else
-    {
+    } else {
         number = number >= -999 ? (number <= 9999 ? number : 9999) : -999;
 
-        if (number > 0 && number < 1000)
-        {
+        if (number > 0 && number < 1000){
             integerPart = (int32_t)(floorf(number));
             decimalPart = (int32_t)((number - integerPart) * 10);
             hundreds = div100Approx(integerPart);
@@ -276,10 +262,7 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number){
             LEDBuffer[2] = tens == 0 && hundreds == 0 ? NONE_TO_DISPLAY : mapDigitMirror(tens, false);
             LEDBuffer[1] = mapDigitMirror(units, false);
             LEDBuffer[0] = mapDigitMirror(decimalPart, true);
-        }
-
-        else if (number > -100 && number < 0)
-        {
+        } else if (number > -100 && number < 0){
             integerPart = (int32_t)(floorf(-number));
             decimalPart = abs((int)((number + integerPart) * 10));
             tens = div10Approx(integerPart);
@@ -289,10 +272,7 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number){
             LEDBuffer[2] = tens == 0 ? MINUS_SIGN : mapDigitMirror(tens, false);
             LEDBuffer[1] = mapDigitMirror(units, false);
             LEDBuffer[0] = mapDigitMirror(decimalPart, true);
-        }
-
-        else if (number <= -100)
-        {
+        } else if (number <= -100){
             integerPart = abs((int32_t)number);
             hundreds = div100Approx(integerPart);
             tens = div10Approx(integerPart - hundreds * 100);
@@ -302,10 +282,7 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number){
             LEDBuffer[2] = mapDigitMirror(hundreds, false);
             LEDBuffer[1] = mapDigitMirror(tens, false);
             LEDBuffer[0] = mapDigitMirror(units, false);
-        }
-
-        else if (number >= 1000)
-        {
+        } else if (number >= 1000){
             integerPart = (int32_t)number;
             thousands = div1000Approx(integerPart);
             hundreds = div100Approx(integerPart - thousands * 1000);
@@ -316,10 +293,7 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number){
             LEDBuffer[2] = mapDigitMirror(hundreds, false);
             LEDBuffer[1] = mapDigitMirror(tens, false);
             LEDBuffer[0] = mapDigitMirror(units, false);
-        }
-
-        else
-            ;
+        } else;
     }
 
     alpha4.clear();
@@ -333,8 +307,7 @@ void writeFloatLED_Mirror(Adafruit_AlphaNum4 &alpha4, float number){
 
 void writeStringLED_Mirror(Adafruit_AlphaNum4 &alpha4, const char *stringInput){
     /*!Only show first 4 chars*/
-    if (stringInput == nullptr)
-    {
+    if (stringInput == nullptr){
         clearSegmentLED(alpha4);
         return;
     }
@@ -343,12 +316,11 @@ void writeStringLED_Mirror(Adafruit_AlphaNum4 &alpha4, const char *stringInput){
         NONE_TO_DISPLAY,
         NONE_TO_DISPLAY,
         NONE_TO_DISPLAY,
-        NONE_TO_DISPLAY};
+        NONE_TO_DISPLAY
+    };
     int scrollIndex = 0;
     int stringLength = strlen(stringInput);
-
-    for (int i = 0; i < 4; i++)
-    {
+    for (int i = 0; i < 4; i++){
         LEDBuffer[3 - i] = mapStringMirror(stringInput[i]);
     }
 
@@ -374,8 +346,7 @@ void writeFloatLED(Adafruit_AlphaNum4 &alpha4, float number){
     int hundreds = 0;
     int64_t thousands = 0;
 
-    if (isinf(number))
-    {
+    if (isinf(number)){
         alpha4.clear();
         alpha4.writeDigitAscii('+', 0);
         alpha4.writeDigitAscii('I', 1);
@@ -385,8 +356,7 @@ void writeFloatLED(Adafruit_AlphaNum4 &alpha4, float number){
         return;
     }
 
-    if (isnan(number))
-    {   
+    if (isnan(number)){   
         alpha4.clear();
         alpha4.writeDigitAscii('N', 0);
         alpha4.writeDigitAscii('A', 1);
@@ -395,8 +365,7 @@ void writeFloatLED(Adafruit_AlphaNum4 &alpha4, float number){
         return;
     }
     
-    if (isinf(-number))
-    {
+    if (isinf(-number)){
         alpha4.clear();
         alpha4.writeDigitAscii('-', 0);
         alpha4.writeDigitAscii('I', 1);
@@ -429,8 +398,7 @@ void writeFloatLED(Adafruit_AlphaNum4 &alpha4, float number){
         LEDBuffer[1] = tens == 0 && hundreds == 0 ? NONE_TO_DISPLAY : mapDigit(tens, false);
         LEDBuffer[2] = mapDigit(units, true);
         LEDBuffer[3] = mapDigit(decimalPart, false);
-    }
-    else if (number > -100 && number < 0){
+    } else if (number > -100 && number < 0){
         integerPart = (int32_t)(floorf(-number));
         decimalPart = abs((int)((number + integerPart) * 10));
         tens = div10Approx(integerPart);
@@ -440,9 +408,7 @@ void writeFloatLED(Adafruit_AlphaNum4 &alpha4, float number){
         LEDBuffer[1] = tens == 0 ? MINUS_SIGN : mapDigit(tens, false);
         LEDBuffer[2] = mapDigitMirror(units, true);
         LEDBuffer[3] = mapDigitMirror(decimalPart, false);
-    }
-
-    else if (number <= -100){
+    } else if (number <= -100){
         integerPart = abs((int32_t)number);
         hundreds = div100Approx(integerPart);
         tens = div10Approx(integerPart - hundreds * 100);
@@ -452,9 +418,7 @@ void writeFloatLED(Adafruit_AlphaNum4 &alpha4, float number){
         LEDBuffer[1] = mapDigitMirror(hundreds, false);
         LEDBuffer[2] = mapDigitMirror(tens, false);
         LEDBuffer[3] = mapDigitMirror(units, false);
-    }
-
-    else if (number >= 1000){
+    } else if (number >= 1000){
         integerPart = (int32_t)number;
         thousands = div1000Approx(integerPart);
         hundreds = div100Approx(integerPart - thousands * 1000);
@@ -465,10 +429,7 @@ void writeFloatLED(Adafruit_AlphaNum4 &alpha4, float number){
         LEDBuffer[1] = mapDigitMirror(hundreds, false);
         LEDBuffer[2] = mapDigitMirror(tens, false);
         LEDBuffer[3] = mapDigitMirror(units, false);
-    }
-
-    else
-            ;
+    } else;
 
     alpha4.clear();
     alpha4.writeDigitRaw(0, LEDBuffer[0]);
@@ -481,8 +442,7 @@ void writeFloatLED(Adafruit_AlphaNum4 &alpha4, float number){
 
 void writeStringLED(Adafruit_AlphaNum4 &alpha4, const char *stringInput){
     /*!Only show first 4 chars*/
-    if (stringInput == nullptr)
-    {
+    if (stringInput == nullptr){
         clearSegmentLED(alpha4);
         return;
     }
