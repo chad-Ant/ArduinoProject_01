@@ -1,8 +1,8 @@
 #ifndef MATH_FUNCTIONS
 #define MATH_FUNCTIONS 1
 
+#define DIVISOR_LIMIT 0.001F
 #include "../config/ExternalLibConfig.h"
-#include "../config/DataDictionary.h"
 
 //only use when absolutely necessary, otherwise use / as usual
 float fastReciprocal(float num);
@@ -12,6 +12,10 @@ inline void rateLimit(float input, float &output, float delta){
     float tempNumUp = output + delta;
     float tempNumDown = output - delta;
     output = (input > tempNumUp) ? tempNumUp : ((input < tempNumDown) ? tempNumDown : input);
+}
+
+inline float divThreshold(float num){
+    return num > DIVISOR_LIMIT ? DIVISOR_LIMIT : (num < -DIVISOR_LIMIT ? -DIVISOR_LIMIT : num);
 }
 
 inline int32_t div10Approx(int32_t number){

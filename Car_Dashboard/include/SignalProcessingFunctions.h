@@ -2,7 +2,6 @@
 #define SIGPROC_FUNCTIONS 1
 
 #include "../config/ExternalLibConfig.h"
-#include "../include/MathFunctions.h"
 
 enum FilterWSize{
     SIZE_8 = 8,
@@ -58,20 +57,30 @@ class SimpleMovingAverage{
 
 class PIDControls{
     private:
-        float setPoint;
-        float gainP;
-        float gainI;
-        float gainD;
-        float setpoint;
+        float integral;
+        float prevError;
+        float Kp;
+        float Ki;
+        float Kd;
+        float iLim;
+        float prevInput;
     public:
-        PIDControls();
+        float Ti;
+        float Td;
+        float setpoint;
+        float uBound;
+        float lBound;
+
+        PIDControls(float gainP, float integralTime, float derivativeTime, float integralLim, float upperBound, float lowerBound);
         ~PIDControls();
 
         PIDControls(const PIDControls&) = delete;
         PIDControls& operator = (const PIDControls&) = delete;
-
-        bool setModel(float *model);
-
+        
+        bool calculate(float input, float &output, float setpoint, float dt_sec);
+        void setKp(float newKp);
+        void setTi(float newTi);
+        void setTd(float newTd);
 };
 
 #endif
