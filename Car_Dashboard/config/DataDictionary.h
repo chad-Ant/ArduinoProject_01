@@ -21,7 +21,7 @@
 #define GPS_REFRESH_RATE                             4U
 #define GPS_BAUDRATE_DEFAULT                         9600U
 #define GPS_BAUDRATE_CUSTOM                          115200UL
-#define GPS_ASSISTNOW_TOKEN                          "x-xF25aCRFyCVqidX0-3Pw" //add token before compiling 
+#define GPS_ASSISTNOW_TOKEN                          "" //add token before compiling 
 #define GPS_ASSISTNOW_SERVER_1                       "online-live1.services.u-blox.com"
 #define GPS_ASSISTNOW_SERVER_2                       "online-live2.services.u-blox.com"
 //#define AssistNowServer1_OFFLINE                    "offline-live1.services.u-blox.com"

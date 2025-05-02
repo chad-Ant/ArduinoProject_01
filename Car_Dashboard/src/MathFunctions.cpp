@@ -3,13 +3,15 @@
 float fastReciprocal(float num){
     float sign = num < 0 ? -1 : 1;
     unsigned int numBit;
-    num *= sign;
+    num = divThreshold(num) * sign;
     memcpy(&numBit, &num, sizeof(numBit));
     
     int guessBit = (int)(0x7EF127EA - numBit); //0x7EF127EA: initial guess
     float guess;
     memcpy(&guess, &guessBit, sizeof(guess));
-
+#ifdef MATHLIB_ROBUST
+    guess *= 2 - num * guess;
+#endif
     return guess * (2 - num * guess) * sign;
 }
 
