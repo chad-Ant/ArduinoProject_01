@@ -17,13 +17,13 @@ PIDControls::PIDControls(float gainP, float integralTime, float derivativeTime, 
     prevError(0.0f),
     controlState(OFF){
         Ki = integralTime == 0.0f ? 0.0f : gainP / divThreshold(integralTime);
-        Kd = derivativeTime == 0.0f ? 0.0f : gainP * derivativeTime;
+        Kd = gainP * derivativeTime;
     }
 
 PIDControls::~PIDControls(){
     }
 
-    void PIDControls::reset(float input, float &output){
+void PIDControls::reset(float input, float &output){
     controlState = ON;
     prevInput = input;
     prevError = input - sp;

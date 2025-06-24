@@ -12,6 +12,7 @@
 #include <ArduinoHttpClient.h>
 #include <WiFiUdp.h>
 #include <CAN.h>
+#include <SdFat.h>
 #include <TimeLib.h>
 #include <RTCZero.h>
 #include <cmath>
