@@ -1,3 +1,6 @@
+#include <string.h>   // memset
+#include <math.h>     // isnan
+
 #include "../include/SignalProcessingFunctions.h"
 
 SimpleMovingAverage::SimpleMovingAverage(const FilterWSize wSize):

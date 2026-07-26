@@ -61,7 +61,15 @@ HTTPReturnStatus HTTPPost(HttpClient *client, const String request, const String
 }
 
 void closeHTTPInstance(HttpClient *client){
+    // Guard: initializeHTTPInstance()/initializeHTTPSInstance() return NULL on failure,
+    // so a caller cleaning up after an error would otherwise dereference NULL here.
+    if (!client) return;
     client->stop();
+    // -Wdelete-non-virtual-dtor is a false positive here: HttpClient is polymorphic with a
+    // non-virtual dtor, but we allocate and delete through the *exact* same type
+    // (HttpClient*), never through a base pointer, so no UB is possible.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdelete-non-virtual-dtor"
     delete client;
-    return;
+#pragma GCC diagnostic pop
 }

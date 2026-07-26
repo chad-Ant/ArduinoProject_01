@@ -1,3 +1,5 @@
+#include <string.h>   // memcpy for the IEEE-754 bit tricks
+
 #include "../include/MathFunctions.h"
 
 float fastReciprocal(float num){

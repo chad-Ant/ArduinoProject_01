@@ -1,7 +1,6 @@
 #ifndef DATA_DICTIONARY
 #define DATA_DICTIONARY 1
 
-#define GPS_PIN                                     7U
 #define SERVO_XAXIS_PIN                             20U
 #define SERVO_YAXIS_PIN                             19U
 #define SEGLED_ADDRESS                              112U
@@ -17,18 +16,9 @@
 #define WIFI_PASS_BACKUP_2                          "0938690720kien"
 
 #define GPS_DEFAULT_I2C_ADDRESS                      66U
-#define GPS_BACKUP_I2C_ADDRESS                       8U
 #define GPS_REFRESH_RATE                             4U
 #define GPS_BAUDRATE_DEFAULT                         9600U
 #define GPS_BAUDRATE_CUSTOM                          115200UL
-#define GPS_ASSISTNOW_TOKEN                          "" //add token before compiling 
-#define GPS_ASSISTNOW_SERVER_1                       "online-live1.services.u-blox.com"
-#define GPS_ASSISTNOW_SERVER_2                       "online-live2.services.u-blox.com"
-//#define AssistNowServer1_OFFLINE                    "offline-live1.services.u-blox.com"
-//#define AssistNowServer2_OFFLINE                    "offline-live2.services.u-blox.com"
-#define GPS_GET_ASSISTNOW_ONLINE                     "/GetOnlineData.ashx?token=%s;gnss=gps,glo,qzss,gal;datatype=eph,alm,aux,pos;%s"
-//#define GETRequest_Offline                          "/GetOfflineData.ashx?token=%s;gnss=gps,glo,gal;period=1;resolution=1"
-///GetOnlineData.ashx?token=;gnss=gps,glo,qzss,gal;datatype=eph,alm,aux,pos;lat=10.815329;lon=106.657337;alt=10.000000;pacc=10000.000000
 #define USE_DEFAULT_LOCATION 1
 #ifdef USE_HOCHIMINH    //10.81532915851147, 106.6573371901137
 #define GPS_DEFAULT_POSITION                         "lat=10.81532915851147;lon=106.6573371901137;alt=10.000000;pacc=50000.000000"
@@ -42,8 +32,27 @@
 #define LOCAL_TIMEZONE                               7
 
 #define CAN_BAUDRATE_DEFAULT                         500000UL
+/// MCP2515 crystal frequency — MUST match the physical module (16 MHz on the MKR CAN
+/// shield; many bare red/blue MCP2515 boards use 8 MHz — set 8000000UL for those).
+#define MCP2515_OSC_FREQ                             16000000UL
 //SPI interface pins, avoid using these for other purposes
-//#define MCP2515_DEFAULT_CS_PIN          3
-//#define MCP2515_DEFAULT_INT_PIN         7
+#define MCP2515_DEFAULT_CS_PIN                       3
+#define MCP2515_DEFAULT_INT_PIN                      7
+
+/// Chip-select pin for the external SD card module (SPI).
+#define SD_CS_PIN                                    4U
+
+/// Default GPS position floats — match the @c USE_DEFAULT_LOCATION string in @c GPS_DEFAULT_POSITION.
+#define GPS_DEFAULT_LAT                              10.81532915851147f
+#define GPS_DEFAULT_LON                              106.6573371901137f
+#define GPS_DEFAULT_ALT                              10.0f
+#define GPS_DEFAULT_PACC                             100000.0f
+
+/// ESP32-C3 telemetry link (MKR Zero @c Serial1 UART).
+#define ESP32_UART_BAUD                              115200UL
+/// Streaming push period — 100 ms = 10 Hz.
+#define COMM_STREAM_INTERVAL_MS                      100UL
+/// Max inbound command frames serviced per @c tickCommMaster() call (RX budget).
+#define COMM_MAX_CMDS_PER_TICK                       8U
 
 #endif

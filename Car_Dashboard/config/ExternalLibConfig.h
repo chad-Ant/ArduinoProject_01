@@ -2,17 +2,16 @@
 #define EXTERNAL_LIB_CONFIG 1
 
 #include <Wire.h>
-#include <SparkFun_u-blox_GNSS_Arduino_Library.h>
-#include <Servo.h>
+// GPS libraries (SparkFun u-blox GNSS) are owned by GPSFunctions.h/.cpp, not bundled here.
+// Servo library is owned by ServoFunctions.h/.cpp, not bundled here.
 #include <Arduino.h>
-#include "Adafruit_LEDBackpack.h"
+// LED backpack (Adafruit_AlphaNum4) is owned by SegmentLEDFunctions.h/.cpp, not bundled here.
 //#include "LowPower.h"
 #include <SPI.h>
-#include <WiFi101.h>
-#include <ArduinoHttpClient.h>
-#include <WiFiUdp.h>
-#include <CAN.h>
-#include <SdFat.h>
+// WiFi stack (WiFi101 / ArduinoHttpClient / WiFiUdp) is owned by
+// WiFiFunctions.h, HTTPClientFunctions.h and UDPClientFunctions.h — not bundled here.
+// CAN library (arduino-CAN) is owned by OBD2Functions.h/.cpp, not bundled here.
+// SD libraries (SdFat) are owned by SDFunctions.h/.cpp, not bundled here.
 #include <TimeLib.h>
 #include <RTCZero.h>
 #include <cmath>
@@ -20,12 +19,7 @@
 #include <climits>
 #include "time.h"
 
-//substitute for std::swap
-template <typename T>
-void swapCustom(T& a, T& b) {
-    T temp = a;
-    a = b;
-    b = temp;
-}
+// swapCustom() (the std::swap substitute) now lives in include/MathFunctions.h,
+// alongside the interpolate()/saturate() helpers that use it.
 
 #endif

@@ -1,5 +1,6 @@
+#include <TimeLib.h>   // tmElements_t, makeTime, CalendarYrToTm for applyTimezoneOffset()
+
 #include "../include/TimerFunctions.h"
-#include "../include/WiFiFunctions.h"
 
 TimerReturnStatus initializeRTC(RTCZero &rtc){
     rtc.begin();
@@ -7,89 +8,90 @@ TimerReturnStatus initializeRTC(RTCZero &rtc){
     return TimerReturnStatus::NOK_RTC_FAILED;
 }
 
-void checkTimeValidity(uint8_t &tHour, uint8_t &tMinute, uint8_t &tSecond){
-    tHour = tHour > 23 ? 23 : tHour;
+static void checkTimeValidity(uint8_t &tHour, uint8_t &tMinute, uint8_t &tSecond){
+    tHour   = tHour   > 23 ? 23 : tHour;
     tMinute = tMinute > 59 ? 59 : tMinute;
     tSecond = tSecond > 59 ? 59 : tSecond;
 }
 
-void checkTimezoneValidity(int8_t &timezone){
+static void checkTimezoneValidity(int8_t &timezone){
     timezone = timezone < -12 ? -12 : (timezone > 12 ? 12 : timezone);
 }
 
-TimerReturnStatus getNTPDate(uint8_t &tDate, uint8_t &tMonth, uint16_t &tYear, int8_t timezone){ //areas with fractional timezone offsets not supported
-    if (!isWifiConnected()) return TimerReturnStatus::NOK_NO_CONNECTION;
-
-    unsigned long unixTime = 0;
-    if (getUnixTime(unixTime) != WiFiReturnStatus::OK) return TimerReturnStatus::NOK_NTP_TIME_FAILED;
-
-    checkTimezoneValidity(timezone);
-    unixTime += timezone * 3600;
-    time_t t = unixTime;
-    tYear = year(t);
-    tMonth = month(t);
-    tDate = day(t);
-    return TimerReturnStatus::OK;
-}
-
-TimerReturnStatus getNTPTime(uint8_t &tHour, uint8_t &tMinute, uint8_t &tSecond, int8_t timezone){
-    if (!isWifiConnected()) return TimerReturnStatus::NOK_NO_CONNECTION;
-
-    unsigned long unixTime = 0;
-    if (getUnixTime(unixTime) != WiFiReturnStatus::OK) return TimerReturnStatus::NOK_NTP_TIME_FAILED;
-
-    checkTimezoneValidity(timezone);
-    unixTime += timezone * 3600;
-    time_t t = unixTime;
-    tHour = hour(t);
-    tMinute = minute(t);
-    tSecond = second(t);
-    return TimerReturnStatus::OK;
-}
-
-TimerReturnStatus getNTPDateTime(uint8_t &tHour, uint8_t &tMinute, uint8_t &tSecond, uint8_t &tDate, uint8_t &tMonth, uint16_t &tYear, int8_t timezone){
-    if (!isWifiConnected()) return TimerReturnStatus::NOK_NO_CONNECTION;
-
-    unsigned long unixTime = 0;
-    if (getUnixTime(unixTime) != WiFiReturnStatus::OK) return TimerReturnStatus::NOK_NTP_TIME_FAILED;
-
-    checkTimezoneValidity(timezone);
-    unixTime += timezone * 3600;
-    time_t t = unixTime;
-    tYear = year(t);
-    tMonth = month(t);
-    tDate = day(t);
-    tHour = hour(t);
-    tMinute = minute(t);
-    tSecond = second(t);
-    return TimerReturnStatus::OK;
-}
-
-TimerReturnStatus setRTCDateTime(RTCZero &rtc, int8_t timezone){
-    if (!isWifiConnected()) return TimerReturnStatus::NOK_NO_CONNECTION;
-    if (!rtc.isConfigured()) return TimerReturnStatus::NOK_RTC_FAILED;
-
-    unsigned long unixTime = 0;
-    if (getUnixTime(unixTime) != WiFiReturnStatus::OK) return TimerReturnStatus::NOK_NTP_TIME_FAILED;
-
-    checkTimezoneValidity(timezone);
-    unixTime += timezone * 3600;
-    time_t t = unixTime;
-    rtc.setTime((int8_t)(hour(t)), (int8_t)(minute(t)), (int8_t)(second(t)));
-    rtc.setDate((int8_t)(day(t)), (int8_t)(month(t)), (int8_t)(year(t) - 2000));
-    return TimerReturnStatus::OK;
+static void checkDateValidity(uint8_t &tDate, uint8_t &tMonth, uint16_t &tYear){
+    tDate  = tDate  < 1  ? 1  : (tDate  > 31   ? 31   : tDate);
+    tMonth = tMonth < 1  ? 1  : (tMonth > 12   ? 12   : tMonth);
+    tYear  = tYear  < 2000u ? 2000u : (tYear > 2099u ? 2099u : tYear);
 }
 
 void getRTCDate(RTCZero &rtc, uint8_t &tDate, uint8_t &tMonth, uint16_t &tYear){
-    tDate = rtc.getDay();
+    tDate  = rtc.getDay();
     tMonth = rtc.getMonth();
-    tYear = rtc.getYear();
+    tYear  = 2000u + rtc.getYear(); // RTCZero stores 0-99; return full 4-digit year
 }
 
 void getRTCTime(RTCZero &rtc, uint8_t &tHour, uint8_t &tMinute, uint8_t &tSecond){
-    tHour = rtc.getHours();
+    tHour   = rtc.getHours();
     tMinute = rtc.getMinutes();
     tSecond = rtc.getSeconds();
+}
+
+void getRTCDateTime(RTCZero &rtc,
+                    uint8_t &tHour, uint8_t &tMinute, uint8_t &tSecond,
+                    uint8_t &tDate, uint8_t &tMonth,  uint16_t &tYear){
+    tHour   = rtc.getHours();
+    tMinute = rtc.getMinutes();
+    tSecond = rtc.getSeconds();
+    tDate   = rtc.getDay();
+    tMonth  = rtc.getMonth();
+    tYear   = 2000u + rtc.getYear();
+}
+
+TimerReturnStatus setRTCTime(RTCZero &rtc, uint8_t tHour, uint8_t tMinute, uint8_t tSecond){
+    if (!rtc.isConfigured()) return TimerReturnStatus::NOK_RTC_FAILED;
+    checkTimeValidity(tHour, tMinute, tSecond);
+    rtc.setTime(tHour, tMinute, tSecond);
+    return TimerReturnStatus::OK;
+}
+
+TimerReturnStatus setRTCDate(RTCZero &rtc, uint8_t tDate, uint8_t tMonth, uint16_t tYear){
+    if (!rtc.isConfigured()) return TimerReturnStatus::NOK_RTC_FAILED;
+    checkDateValidity(tDate, tMonth, tYear);
+    rtc.setDate(tDate, tMonth, (uint8_t)(tYear - 2000u));
+    return TimerReturnStatus::OK;
+}
+
+TimerReturnStatus setRTCDateTime(RTCZero &rtc,
+                                 uint8_t tHour, uint8_t tMinute, uint8_t tSecond,
+                                 uint8_t tDate, uint8_t tMonth,  uint16_t tYear){
+    if (!rtc.isConfigured()) return TimerReturnStatus::NOK_RTC_FAILED;
+    checkTimeValidity(tHour, tMinute, tSecond);
+    checkDateValidity(tDate, tMonth, tYear);
+    rtc.setTime(tHour, tMinute, tSecond);
+    rtc.setDate(tDate, tMonth, (uint8_t)(tYear - 2000u));
+    return TimerReturnStatus::OK;
+}
+
+TimerReturnStatus applyTimezoneOffset(RTCZero &rtc, int8_t offset){
+    if (!rtc.isConfigured()) return TimerReturnStatus::NOK_RTC_FAILED;
+    checkTimezoneValidity(offset);
+
+    tmElements_t te;
+    te.Year   = CalendarYrToTm(2000u + rtc.getYear());
+    te.Month  = rtc.getMonth();
+    te.Day    = rtc.getDay();
+    te.Hour   = rtc.getHours();
+    te.Minute = rtc.getMinutes();
+    te.Second = rtc.getSeconds();
+    time_t t  = makeTime(te) + (long)offset * 3600L;
+
+    // Guard before cast: year(t) < 2000 underflows uint8_t to 255 (invalid BCD).
+    int adjustedYear = year(t);
+    if (adjustedYear < 2000 || adjustedYear > 2099) return TimerReturnStatus::NOK_TIME_OUT_OF_RANGE;
+
+    rtc.setTime((uint8_t)hour(t), (uint8_t)minute(t), (uint8_t)second(t));
+    rtc.setDate((uint8_t)day(t), (uint8_t)month(t), (uint8_t)(adjustedYear - 2000));
+    return TimerReturnStatus::OK;
 }
 
 TimerReturnStatus setAlarmTime(RTCZero &rtc, uint8_t tHour, uint8_t tMinute, uint8_t tSecond){
@@ -102,15 +104,15 @@ TimerReturnStatus setAlarmTime(RTCZero &rtc, uint8_t tHour, uint8_t tMinute, uin
 
 TimerReturnStatus armAlarm(RTCZero &rtc, RTCZero::Alarm_Match alarmType, voidFuncPtr callback, bool enable){
     if (!rtc.isConfigured()) return TimerReturnStatus::NOK_RTC_FAILED;
-    if (callback == nullptr) return TimerReturnStatus::NOK_VOID_CALLBACK;
-    
+
     if (enable){
+        if (callback == nullptr) return TimerReturnStatus::NOK_VOID_CALLBACK;
         rtc.enableAlarm(alarmType);
         rtc.attachInterrupt(callback);
-        return TimerReturnStatus::OK;
     } else {
         rtc.detachInterrupt();
         rtc.disableAlarm();
-        return TimerReturnStatus::OK;
-    } 
+    }
+    return TimerReturnStatus::OK;
 }
+

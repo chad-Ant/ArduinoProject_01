@@ -4,17 +4,19 @@
 //#define PID_BACK_CALC
 //#define PID_ROBUST
 
+// Initialiser order must match the member declaration order in the header
+// (public sp/uBound/lBound first, then Kp..controlState) or GCC warns -Wreorder.
 PIDControls::PIDControls(float gainP, float integralTime, float derivativeTime, float setpoint, float upperBound, float lowerBound):
-    Kp(gainP),
-    Ti(integralTime),
-    Td(derivativeTime),
     sp(setpoint),
     uBound(upperBound),
     lBound(lowerBound),
-    integral(0.0f),
-    derivative(0.0f),
+    Kp(gainP),
+    Ti(integralTime),
+    Td(derivativeTime),
     prevInput(0.0f),
     prevError(0.0f),
+    integral(0.0f),
+    derivative(0.0f),
     controlState(OFF){
         Ki = integralTime == 0.0f ? 0.0f : gainP / divThreshold(integralTime);
         Kd = gainP * derivativeTime;
